@@ -1,0 +1,238 @@
+@use "../../styles/partial/colors" as *;
+@use "../../styles/partial/fonts" as *;
+@use "../../styles/partial/mixin" as *;
+
+.singleproduct {
+  padding: 1rem;
+
+  @include tablet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @include desktop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__img {
+    width: 100%;
+    @include tablet {
+      width: 13rem;
+      height: 15rem;
+      display: inline-block;
+      justify-content: space-around;
+      flex-shrink: 0;
+      // margin-right: 1rem;
+      border-radius: 5px;
+    }
+
+    @include desktop {
+      width: 13rem;
+      height: 15rem;
+      display: inline-block;
+      justify-content: space-around;
+      flex-shrink: 0;
+      // margin-right: 1rem;
+      border-radius: 5px;
+    }
+  }
+
+  &__wrapper {
+    border: 1px solid $color-cloud;
+    border-radius: 0.55rem;
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.55rem 0.55rem $color-cloud;
+
+    @include tablet {
+      width: 70%;
+    }
+
+    @include desktop {
+      width: 60%;
+    }
+  }
+
+  &__item-box {
+    @include tablet {
+      display: flex;
+      flex-direction: row;
+    }
+
+    @include desktop {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
+  &__details {
+    @include tablet {
+      padding: 0 1rem;
+    }
+
+    @include desktop {
+      padding: 0 1rem;
+    }
+  }
+
+  &__top-button {
+    display: flex;
+    align-items: center;
+    color: $color-cloud;
+
+    @include tablet {
+      position: relative;
+      right: 14.8rem;
+    }
+
+    @include desktop {
+      position: relative;
+      right: 24rem;
+    }
+  }
+
+  &__top-button-text {
+    font-weight: 700;
+    font-size: 0.91rem;
+    padding: 1rem 0.2rem;
+    position: relative;
+    top: 0.1rem;
+  }
+
+  &__top-link {
+    list-style: none;
+    text-decoration: none;
+  }
+  &__pramary-info-header {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.55;
+    margin: 0.55rem 0;
+  }
+
+  &__secundary-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $color-cloud;
+  }
+
+  &__secundary-details-label {
+    font-weight: 700;
+  }
+
+  &__secundary-details-select {
+    width: 3rem;
+    border-radius: 1rem;
+    border: 1px solid $color-cloud;
+    padding: 0.1rem;
+  }
+  &__item-name {
+    color: $color-cloud;
+  }
+
+  &__item-price {
+    font-weight: 700;
+  }
+
+  &__item-button {
+    width: 95%;
+    padding: 0.55rem 0;
+    border: none;
+    border-radius: 5rem;
+    color: $color-white;
+    font-size: 1rem;
+    margin-top: 0.55rem;
+    background: $color-indigo;
+  }
+
+  &__description {
+    text-align: left;
+    color: $color-graphite;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__description-title {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    font-size: 1.11rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid $color-cloud;
+    padding-bottom: 1rem;
+    padding: 1rem 0;
+  }
+
+  &__form-label {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    font-size: 1.11rem;
+  }
+
+  &__form-input {
+    font-family: "avenir-regular";
+    border: 1px solid $color-cloud;
+    border-radius: 0.3rem;
+    padding: 0.55rem 1rem;
+    height: 15vh;
+  }
+
+  &__form-button {
+    margin-top: 1rem;
+    padding: 0.55rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: $color-slate;
+    color: $color-white;
+    font-weight: 700;
+    font-family: "avenir-regular";
+
+    @include tablet {
+      width: 20%;
+    }
+
+    @include desktop {
+      width: 25%;
+    }
+  }
+
+  &__comment {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid $color-cloud;
+    padding: 1rem;
+  }
+
+  &__comment-header {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+  }
+
+  &__comment-subheader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__comment-avatar {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.5rem;
+    background: $color-cloud;
+  }
+}

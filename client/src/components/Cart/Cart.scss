@@ -1,0 +1,74 @@
+@use "../../styles/partial/colors" as *;
+@use "../../styles/partial/mixin" as *;
+
+.cart {
+  padding: 1rem;
+
+  @include tablet {
+    display: flex;
+    justify-content: center;
+  }
+
+  @include desktop {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__wrapper {
+    border: 1px solid $color-cloud;
+    border-radius: 0.55rem;
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.55rem 0.55rem $color-cloud;
+
+    @include tablet {
+      display: flex;
+      justify-content: column;
+      width: 45%;
+      min-height: 60vh;
+      max-height: 100%;
+    }
+
+    @include desktop {
+      display: flex;
+      justify-content: column;
+      width: 30%;
+      min-height: 70vh;
+      max-height: 100%;
+    }
+  }
+
+  &__header {
+    line-height: 2;
+    width: 100%;
+  }
+
+  &__header-title {
+    font-weight: 700;
+    font-size: 1.55rem;
+  }
+
+  &__header-buttton {
+    width: 95%;
+    padding: 0.55rem 0;
+    border: none;
+    border-radius: 5rem;
+    color: $color-white;
+    font-size: 1rem;
+    background: $color-green;
+  }
+
+  &__cartitems {
+    margin-top: 1rem;
+  }
+
+  &__emptyMessages {
+    padding: 1rem 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: $color-red;
+  }
+}

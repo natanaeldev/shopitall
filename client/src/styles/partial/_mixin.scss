@@ -1,0 +1,21 @@
+@mixin mobile {
+  @media only screen and (max-width: 767px) {
+    @content;
+  }
+}
+@mixin tablet {
+  @media only screen and (min-width: 767px) and (max-width: 1279px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media only screen and(min-width:1280px) {
+    @content;
+  }
+}
+
+@mixin round-element {
+  padding: 0.5rem 1rem;
+  border-radius: 5rem;
+}

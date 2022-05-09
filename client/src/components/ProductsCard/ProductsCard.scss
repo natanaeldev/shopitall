@@ -1,0 +1,67 @@
+@use "../../styles/partial/colors" as *;
+@use "../../styles/partial/mixin" as *;
+
+.productscard {
+  &__wrapper {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+  }
+
+  &__title {
+    padding: 1rem 0 0 1rem;
+    color: $color-slate;
+    font-size: 1.55rem;
+    font-family: "avenir-bold";
+    font-weight: 700;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  &__item-box {
+    padding: 1rem 0;
+  }
+
+  &__details-description {
+    padding: 0.55rem 0;
+    font-size: 1.21rem;
+    color: $color-black;
+    font-family: "avenir-bold";
+    font-weight: 700;
+  }
+
+  &__details-price {
+    font-size: 1rem;
+    font-family: "avenir-bold";
+    font-weight: 700;
+    color: $color-cloud;
+  }
+
+  &__img {
+    width: 100%;
+    flex-shrink: 0;
+    display: inline-block;
+    border-radius: 5px;
+    @include tablet {
+      width: 13rem;
+      height: 15rem;
+      display: inline-block;
+      justify-content: space-around;
+      flex-shrink: 0;
+      border-radius: 5px;
+    }
+
+    @include desktop {
+      width: 13rem;
+      height: 15rem;
+      display: inline-block;
+      justify-content: space-around;
+      flex-shrink: 0;
+      border-radius: 5px;
+    }
+  }
+}

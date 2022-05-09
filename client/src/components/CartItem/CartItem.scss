@@ -1,0 +1,71 @@
+@use "../../styles/partial/colors" as *;
+
+.cartitem {
+  border-top: 1px solid $color-cloud;
+  margin: 1rem 0;
+  &__wrapper {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  &__header {
+    padding: 1rem 0;
+  }
+
+  &__header-img {
+    width: 100%;
+  }
+
+  &__info-header {
+    line-height: 1.55;
+  }
+
+  &__info-options {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.55;
+  }
+
+  &__info-button {
+    margin: 0.55rem 0;
+
+    text-align: center;
+    width: 95%;
+    padding: 0.55rem 0;
+    border: none;
+    border-radius: 5rem;
+    color: $color-white;
+    font-size: 1rem;
+    background: $color-red;
+  }
+
+  &__info-button-icon {
+    position: relative;
+    right: 4rem;
+  }
+
+  &__info-header-name {
+    font-weight: 700;
+    color: $color-cloud;
+  }
+
+  &__info-header-title {
+    font-weight: 700;
+  }
+
+  &__info-header-price {
+    font-weight: 700;
+    color: $color-cloud;
+  }
+
+  &__description {
+    border-top: 1px solid $color-cloud;
+    padding: 1rem 0;
+  }
+
+  &__description-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+}

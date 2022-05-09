@@ -1,0 +1,12 @@
+@use "../../styles/partial/colors" as *;
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: $color-Lgrey;
+
+  &__title {
+    margin: 1rem 0;
+  }
+}

@@ -1,0 +1,53 @@
+@use "../../styles/partial/colors" as *;
+@use "../../styles/partial/mixin" as *;
+.products {
+  padding: 1rem;
+
+  @include desktop {
+    padding: 1rem 5rem;
+  }
+
+  &__wrapper {
+    border: 1px solid $color-cloud;
+    border-radius: 0.55rem;
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.55rem 0.55rem $color-cloud;
+    flex-wrap: wrap;
+    row-gap: 1ch;
+    column-gap: 1ch;
+  }
+
+  &__wrapperTablet {
+    @include tablet {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      row-gap: 1ch;
+      column-gap: 1ch;
+    }
+
+    @include desktop {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+    list-style: none;
+
+    @include tablet {
+      width: 30%;
+      box-sizing: border-box;
+    }
+
+    @include desktop {
+      width: 20%;
+      box-sizing: border-box;
+    }
+  }
+}

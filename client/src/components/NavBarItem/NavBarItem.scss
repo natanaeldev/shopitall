@@ -1,0 +1,57 @@
+@use "../../styles/partial/colors" as *;
+@use "../../styles/partial/mixin" as *;
+
+.navbar-menu {
+  display: flex;
+  flex-direction: column;
+  &__items-link {
+    font-size: 1.5em;
+    line-height: 2rem;
+    text-align: center;
+    text-decoration: none;
+    list-style: none;
+    color: $color-black;
+  }
+}
+
+.navbarTable-menu {
+  @include tablet {
+    width: 20rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  @include desktop {
+    width: 25rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  &__items-link {
+    @include tablet {
+      font-size: 1em;
+      line-height: 2rem;
+      text-align: center;
+      text-decoration: none;
+      list-style: none;
+      color: $color-black;
+
+      &--size {
+        font-size: 0.89em;
+      }
+    }
+    @include desktop {
+      font-size: 1em;
+      line-height: 2rem;
+      text-align: center;
+      text-decoration: none;
+      list-style: none;
+      color: $color-black;
+
+      &--size {
+        font-size: 0.89em;
+      }
+    }
+  }
+}

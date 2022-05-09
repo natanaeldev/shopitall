@@ -1,0 +1,108 @@
+@use "../../styles/partial/colors" as *;
+@use "../../styles/partial/mixin" as *;
+
+.signin {
+  padding: 1rem;
+  display: flex;
+  // flex-direction: row;
+  justify-content: center;
+
+  @include tablet {
+    display: flex;
+    justify-content: center;
+  }
+
+  @include desktop {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__wrapper {
+    border: 1px solid $color-cloud;
+    border-radius: 0.55rem;
+    padding: 1rem;
+    max-height: inherit;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.55rem 0.55rem $color-cloud;
+    width: 270px;
+
+    @include tablet {
+      width: 50%;
+      height: inherit;
+    }
+
+    @include desktop {
+      width: 50%;
+      max-height: inherit;
+      margin-bottom: 4rem;
+    }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    margin-bottom: 0.55rem;
+    margin: 1rem 0 0 6rem;
+  }
+
+  &__message {
+    @include tablet {
+      margin-top: 0.55rem;
+      padding: 0.55rem 0;
+      font-weight: 700;
+      color: $color-red;
+    }
+
+    @include desktop {
+      margin-top: 0.55rem;
+      padding: 0.55rem 0;
+      font-weight: 700;
+      color: $color-red;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.55rem 1rem;
+    width: 90%;
+  }
+
+  &__signin-button {
+    margin: 0.55rem 0;
+    border: none;
+    width: 100%;
+    padding: 0.55rem 0;
+    border-radius: 0.55rem;
+  }
+
+  &__username {
+    width: 90%;
+    border: 1px solid $color-cloud;
+    padding: 0.55rem 0.91rem;
+    margin-bottom: 0.55rem;
+    border-radius: 0.55rem;
+  }
+
+  &__password {
+    width: 90%;
+    border: 1px solid $color-cloud;
+    padding: 0.55rem 0.91rem;
+    margin-bottom: 0.55rem;
+    border-radius: 0.55rem;
+  }
+
+  &__username-label {
+    line-height: 2rem;
+  }
+
+  &__password-label {
+    line-height: 2rem;
+  }
+
+  &__account {
+    text-decoration: none;
+    color: black;
+  }
+}

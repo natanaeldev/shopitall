@@ -1,0 +1,114 @@
+@use "../../styles/partial/mixin" as *;
+@use "../../styles/partial/colors" as *;
+.navbar {
+  padding: 1rem;
+  @include tablet {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  @include desktop {
+    padding: 1rem 5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__logo {
+    width: 150px;
+    height: 50px;
+    position: relative;
+    top: 0.2rem;
+  }
+
+  &__cart {
+    color: $color-black;
+  }
+
+  &__count {
+    border-radius: 50%;
+    position: relative;
+    bottom: 0.35rem;
+    text-transform: none;
+    color: $color-black;
+    list-style: none;
+    font-size: 0.85rem;
+  }
+
+  &__menu {
+    position: absolute;
+    box-sizing: border-box;
+    z-index: 42;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: $color-white;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    padding-inline: 1rem;
+    justify-content: center;
+    flex-grow: 1;
+    overflow-x: none;
+    height: 100%;
+  }
+
+  &__menu > div {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__menu-clear-icon {
+    position: absolute;
+    top: 1.9rem;
+  }
+}
+
+.hideTable {
+  @include tablet {
+    display: none;
+  }
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.hideDesktop {
+  @include desktop {
+    display: none;
+  }
+}
+
+.hidePhone {
+  @include mobile {
+    display: none;
+  }
+}
+
+.navbarTable {
+  &__cart {
+    @include tablet {
+      position: fixed;
+      border-radius: 50%;
+      background: $color-white;
+      padding: 0.65rem;
+      right: 0.2rem;
+      bottom: 1rem;
+    }
+  }
+
+  &__cart-icon {
+    color: $color-black;
+  }
+}

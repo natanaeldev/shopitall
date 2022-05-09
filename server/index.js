@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== "production") require("dotenv").config();
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const userRoutes = require("./routes/user");
 const productsRouter = require("./routes/products");
 const checkOutRouter = require("./routes/checkout");

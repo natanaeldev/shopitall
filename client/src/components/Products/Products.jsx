@@ -16,8 +16,8 @@ function Products({ productsContent }) {
       .then((response) => {
         setContentByCategory(response.data);
       });
-  }, [params.category]);
-  console.log(params.category);
+  }, [params.category, apiKey]);
+
   return (
     contentByCategory && (
       <div className="products">

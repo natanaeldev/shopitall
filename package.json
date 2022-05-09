@@ -4,7 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "npm run dev --prefix server",
+    "client": "npm start --prefix client",
+    "install-server": "npm install --prefix server",
+    "install-client": "npm install --prefix client",
+    "build": "npm run build --prefix client",
+    "heroku-postbuild": "npm run install-client && npm run build",
+    "install": "npm run install-server && npm run install-client",
+    "start": "npm start --prefix server",
+    "deploy": "npm run build --prefix client && npm start --prefix server",
+    "watch": "concurrently --kill-others \"npm run server\" \"npm run client\""
   },
   "keywords": [],
   "author": "",

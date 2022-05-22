@@ -1,17 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { getAllProducts } from "./graphql/query/query.graphql";
-import {
-  ApolloClient,
-  HttpLink,
-  ApolloLink,
-  InMemoryCache,
-  concat,
-  ApolloProvider,
-  useQuery,
-  useMutation,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
+
 import axios from "axios";
 
 import HomePage from "./pages/HomePage/HomePage";
@@ -39,7 +28,18 @@ function App() {
   const [failedAuth, setFailAuth] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const { loading, errors, data } = useQuery(getAllProducts);
+  const loadData = () => {
+    const products = axios
+      .get(`${apiKey}products`)
+      .then((response) => {
+        setProductContent(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    return products;
+  };
 
   const handleSignOut = (e) => {
     e.preventDefault();
@@ -100,10 +100,8 @@ function App() {
   };
 
   useEffect(() => {
-    if (data) {
-      setProductContent(data);
-    }
-  }, [data]);
+    loadData();
+  }, []);
 
   return (
     <BrowserRouter>
@@ -120,12 +118,13 @@ function App() {
           path="/products"
           element={
             productsContent && (
-              <ProductsPage
-                productsContent={productsContent}
-                // loadProducts={loadProducts}
-              />
+              <ProductsPage productsContent={productsContent} />
             )
           }
+        />
+        <Route
+          path="/products/category/:category"
+          element={<ProductsPage productsContent={productsContent} />}
         />
         <Route
           path="products/:productid"
@@ -136,11 +135,7 @@ function App() {
             />
           }
         />
-        <Route
-          path="/products/category/:category"
-          element={<ProductsPage productsContent={productsContent} />}
-        />
-
+        {/*
         <Route
           path="/cart"
           element={
@@ -164,7 +159,7 @@ function App() {
               handleCartCount={handleCartCount}
             />
           }
-        />
+        /> */}
         <Route path="/about" element={<AboutPage />} />
       </Routes>
       <Footer />

@@ -2,38 +2,41 @@ import { React, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
-import { useQuery } from "@apollo/client";
-import { getProductsById } from "../../graphql/query/query.graphql";
 
 import "./SingleProduct.scss";
 import ReviewsCard from "../ReviewsCard/ReviewsCard";
+const apiKey = process.env.REACT_APP_API_URL;
 
 function SingleProduct({ currentUser }) {
   const navigate = useNavigate();
   const params = useParams();
   let id = params.productid;
-  const { loading, error, data } = useQuery(getProductsById, {
-    variables: { id },
-  });
+
   const [singleProduct, setSingleProduct] = useState(null);
   const [newItems, setnewItems] = useState("");
 
-  // const handleAddReviews = (e) => {
-  //   e.preventDefault();
-  //   let form = e.target;
-  //   let review = form.comment.value;
+  const handleAddReviews = (e) => {
+    e.preventDefault();
+    let form = e.target;
+    let review = form.comment.value;
 
-  //   axios
-  //     .post(`${apiKey}reviews/${params.productid}`, {
-  //       username: currentUser.username,
-  //       review: review,
-  //       products_id: params.productid,
-  //     })
-  //     .then((response) => {
-  //       loadReviews(params.productid);
-  //       form.reset();
-  //     });
-  // };
+    axios
+      .post(`${apiKey}reviews/${id}`, {
+        username: currentUser.username,
+        review: review,
+        products_id: params.productid,
+      })
+      .then((response) => {
+        // loadReviews(id);
+        form.reset();
+      });
+  };
+
+  useEffect(() => {
+    axios.get(`${apiKey}products/${id}`).then((response) => {
+      setSingleProduct(response.data);
+    });
+  }, [id]);
 
   const handleCartItem = () => {
     const products = JSON.parse(localStorage.getItem("products") || "[]");
@@ -41,12 +44,6 @@ function SingleProduct({ currentUser }) {
     products.push(product[0]);
     localStorage.setItem("products", JSON.stringify(products));
   };
-
-  useEffect(() => {
-    if (data) {
-      setSingleProduct(data);
-    }
-  }, [data]);
 
   let date = (date) => {
     let dates = new Date(date);
@@ -70,16 +67,16 @@ function SingleProduct({ currentUser }) {
           <div className="singleproduct__item-box">
             <img
               className="singleproduct__img"
-              src={singleProduct.productsById.image}
-              alt={singleProduct.productsById.product_name}
+              src={singleProduct.image}
+              alt={singleProduct.product_name}
             />
             <section className="singleproduct__details">
               <div className="singleproduct__pramary-info">
                 <div className="singleproduct__pramary-info-header">
                   <span className="singleproduct__item-name">
-                    {singleProduct.productsById.product_name}
+                    {singleProduct.product_name}
                   </span>
-                  <span className="singleproduct__item-price">{`$${singleProduct.productsById.price}`}</span>
+                  <span className="singleproduct__item-price">{`$${singleProduct.price}`}</span>
                 </div>
                 <div className="singleproduct__secundary-details">
                   <h2>Size:</h2>
@@ -103,7 +100,7 @@ function SingleProduct({ currentUser }) {
                   <h3 className="singleproduct__description-title">
                     Description
                   </h3>
-                  {singleProduct.productsById.description}
+                  {singleProduct.description}
                 </div>
               </div>
             </section>
@@ -125,8 +122,8 @@ function SingleProduct({ currentUser }) {
             <button className="singleproduct__form-button">Review</button>
           </form>
           <section className="singleproduct__comments">
-            {singleProduct.productsById.reviews &&
-              singleProduct.productsById.reviews.map((review) => {
+            {singleProduct.reviews &&
+              singleProduct.reviews.map((review) => {
                 return (
                   <ReviewsCard
                     key={review.id}

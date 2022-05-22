@@ -8,6 +8,7 @@ const {
   httpCreateCheckOutSessions,
   httpGetAllProducts,
   httpGetProductsById,
+  httpGetProductsByCategory,
 } = require("../../controller/product/product.controller");
 
 router
@@ -15,7 +16,9 @@ router
   .post("/create-price", httpCreatePrice)
   .post("/create-checkout-session", httpCreateCheckOutSessions);
 
-router.get("/", httpGetAllProducts);
-router.get("/:id", httpGetProductsById);
+router
+  .get("/", httpGetAllProducts)
+  .get("/:id", httpGetProductsById)
+  .get("/category/:category", httpGetProductsByCategory);
 
 module.exports = router;

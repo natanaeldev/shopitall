@@ -1,6 +1,6 @@
 import React from "react";
 
-function Message({ message }) {
+function MessagesComponent({ message }) {
   return (
     <section>
       <p>{message}</p>
@@ -8,4 +8,4 @@ function Message({ message }) {
   );
 }
 
-export default Message;
+export default MessagesComponent;

@@ -7,20 +7,17 @@ const PORT = process.env.PORT;
 const path = require("path");
 const morgan = require("morgan");
 
-const users = require("./model/user/user.mongo");
-
 const { connectMongoDB } = require("./utils/mongo");
-const { ApolloServer } = require("apollo-server-express");
-const { loadFilesSync } = require("@graphql-tools/load-files");
-const { makeExecutableSchema } = require("@graphql-tools/schema");
 
-const typesArray = loadFilesSync(path.join(__dirname, "**/*.graphql"));
-const resolversArray = loadFilesSync(path.join(__dirname, "**/*.resolvers.js"));
+const productsRouter = require("./routes/products/products.router");
 
 app.use(cors());
 app.use(express.json());
-app.use(morgan("tiny"));
+app.use(morgan("dev"));
 app.use(express.static("public"));
+
+app.use("/api/v1/products", productsRouter);
+app.get("/api/v1/", (req, res) => res.send("Hello World!"));
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("../client/build"));
@@ -30,39 +27,12 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-async function startApolloServer() {
-  if (process.env.NODE_ENV === "production") {
-    app.use(express.static("../client/build"));
-
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "../client", "build", "index.html"));
-    });
-  }
-
-  app.get("/", (re, res) => res.send("graphql server with express"));
-
-  const schema = makeExecutableSchema({
-    typeDefs: typesArray,
-    resolvers: resolversArray,
-    context: ({ req, res }) => ({ req, res }),
-  });
-
-  const apolloServer = new ApolloServer({
-    schema,
-  });
-
-  await apolloServer.start();
-  apolloServer.applyMiddleware({
-    app,
-    path: "/graphql",
-  });
-
+async function startServer() {
   await connectMongoDB();
 
   app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
-    console.log("Running Graphql server...");
   });
 }
 
-startApolloServer();
+startServer();

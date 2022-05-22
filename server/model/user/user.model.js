@@ -39,34 +39,21 @@ async function signIn(username, password) {
   };
 }
 
-async function currentUser(req, res) {
-  console.log(req);
-  if (!req.headers.authorization) {
-    throw new UserInputError("Please login");
-  }
+// async function currentUser(users) {
+//   if (!users.headers.authorization) {
+//     throw new UserInputError("Please login");
+//   }
 
-  const token = req.headers.authorization || "";
-  const user = getUser(token);
+//   const token = users.headers.authorization || "";
+//   // const user = getUser(token);
 
-  if (!user) throw new AuthenticationError("you must be logged in");
+//   if (!user) throw new AuthenticationError("you must be logged in");
 
-  return { user };
-}
-
-const getUser = (token) => {
-  if (token) {
-    try {
-      // return the user information from the token
-      return jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      // if there's a problem with the token, throw an error
-      throw new Error("Session invalid");
-    }
-  }
-};
+//   return { user };
+// }
 
 module.exports = {
   signUp,
   signIn,
-  currentUser,
+  // currentUser,
 };

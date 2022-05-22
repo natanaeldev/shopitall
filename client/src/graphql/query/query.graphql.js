@@ -1,7 +1,8 @@
-import { gql } from "apollo/client";
+import { gql } from "@apollo/client";
 
-// DONE: create a query to get all the products.
-const getAllProducts = gql`
+// DONE: create a query to get all the products
+
+export const getAllProducts = gql`
   query GetProducts {
     products {
       _id
@@ -21,11 +22,11 @@ const getAllProducts = gql`
     }
   }
 `;
+
 // DONE: create a query to ge products by Id.
-
-const getProductsById = gql`
-  query GetProductsById {
-    products(_id: _id) {
+export const getProductsById = gql`
+  query GetProductsById($id: ID!) {
+    productsById(_id: $id) {
       _id
       product_name
       image
@@ -44,11 +45,10 @@ const getProductsById = gql`
   }
 `;
 
-// TODO: create a query to get products by category
-
-const getProductsByCategory = gql`
-  query GetProductsByCategory {
-    products(category: category) {
+// // DONE: create a query to get products by category
+export const GetProductsByCategory = gql`
+  query GetProductsByCategory($category: String!) {
+    productsByCategory(category: $category) {
       _id
       product_name
       image
@@ -66,9 +66,3 @@ const getProductsByCategory = gql`
     }
   }
 `;
-
-module.exports = {
-  getAllProducts,
-  getProductsById,
-  getProductsByCategory,
-};

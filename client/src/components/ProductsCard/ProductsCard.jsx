@@ -3,6 +3,7 @@ import "./ProductsCard.scss";
 
 function ProductsCard({ product }) {
   const { image, product_name, price } = product;
+
   return (
     <div className="productscard">
       <div className="productscard__wrapper">

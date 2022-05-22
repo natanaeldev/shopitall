@@ -1,5 +1,17 @@
 import { React, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { getAllProducts } from "./graphql/query/query.graphql";
+import {
+  ApolloClient,
+  HttpLink,
+  ApolloLink,
+  InMemoryCache,
+  concat,
+  ApolloProvider,
+  useQuery,
+  useMutation,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import axios from "axios";
 
 import HomePage from "./pages/HomePage/HomePage";
@@ -13,6 +25,7 @@ import CartPage from "./pages/CartPage/CartPage";
 import AboutPage from "./pages/AboutPage/AboutPage";
 
 import "./App.scss";
+import { speedDialActionClasses } from "@mui/material";
 
 const apiKey = process.env.REACT_APP_API_URL;
 
@@ -25,6 +38,8 @@ function App() {
   const [success, setSuccess] = useState(false);
   const [failedAuth, setFailAuth] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+
+  const { loading, errors, data } = useQuery(getAllProducts);
 
   const handleSignOut = (e) => {
     e.preventDefault();
@@ -43,26 +58,6 @@ function App() {
         setcartCount(cartCount + elements);
       });
     }
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let form = e.target;
-
-    let username = form.username.value;
-    let password = form.password.value;
-
-    axios
-      .post(`${apiKey}users/login`, {
-        username: username,
-        password: password,
-      })
-      .then((response) => {
-        sessionStorage.setItem("token", response.data.token);
-        setSuccess(true);
-      })
-      .catch((err) => {
-        setError(err.response.data);
-      });
   };
 
   const handleSignUp = (e) => {
@@ -104,33 +99,12 @@ function App() {
       .catch((error) => {});
   };
 
-  const loadProducts = () => {
-    axios.get(`${apiKey}products`).then((response) => {
-      setProductContent(response.data);
-    });
-  };
-
   useEffect(() => {
-    loadProducts();
-
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      return setFailAuth(true);
+    if (data) {
+      setProductContent(data);
     }
+  }, [data]);
 
-    axios
-      .get(`${apiKey}users/current`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setCurrentUser(response.data);
-      })
-      .catch((error) => {
-        setFailAuth(true);
-      });
-  }, []);
-
-  console.log(`this is a keysgit :${process.env.REACT_APP_API_URL}`);
   return (
     <BrowserRouter>
       <NavBar
@@ -148,7 +122,7 @@ function App() {
             productsContent && (
               <ProductsPage
                 productsContent={productsContent}
-                loadProducts={loadProducts}
+                // loadProducts={loadProducts}
               />
             )
           }
@@ -178,13 +152,7 @@ function App() {
         />
         <Route
           path="/signin"
-          element={
-            <SignInPage
-              success={success}
-              error={error}
-              handleSubmit={handleSubmit}
-            />
-          }
+          element={<SignInPage error={error} succes cs />}
         />
         <Route
           path="/signup"

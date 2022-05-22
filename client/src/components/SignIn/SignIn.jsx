@@ -1,16 +1,45 @@
 import React from "react";
 import { Link, Navigate } from "react-router-dom";
+import { signIn } from "../../graphql/mutation/mutation.graphql";
+import { useMutation } from "@apollo/client";
 import "./SignIn.scss";
 
-function SignIn({ success, error, handleSubmit }) {
+function SignIn({ error, success }) {
+  const [setSignIn, { data, load, err }] = useMutation(signIn);
+
+  let username;
+  let password;
+
+  if (data) {
+    localStorage.setItem("token", JSON.stringify(data.signIn.token));
+  }
+
   return (
     <div className="signin">
       <div className="signin__wrapper">
         <h2 className="signin__title">Sign In</h2>
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSignIn({
+              variables: {
+                input: {
+                  username: username.value,
+                  password: password.value,
+                },
+              },
+            });
+
+            username.value = "";
+            password.value = "";
+          }}
+        >
           <label htmlFor="username" className="signin__username-label">
             Username:
             <input
+              ref={(node) => {
+                username = node;
+              }}
               type="text"
               name="username"
               id="username"
@@ -21,6 +50,9 @@ function SignIn({ success, error, handleSubmit }) {
           <label htmlFor="password" className="signin__password-label">
             Password:
             <input
+              ref={(node) => {
+                password = node;
+              }}
               type="password"
               name="password"
               id="password"

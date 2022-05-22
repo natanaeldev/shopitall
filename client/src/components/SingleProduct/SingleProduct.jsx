@@ -2,34 +2,38 @@ import { React, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
+import { useQuery } from "@apollo/client";
+import { getProductsById } from "../../graphql/query/query.graphql";
 
 import "./SingleProduct.scss";
 import ReviewsCard from "../ReviewsCard/ReviewsCard";
 
 function SingleProduct({ currentUser }) {
-  const apiKey = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const params = useParams();
+  let id = params.productid;
+  const { loading, error, data } = useQuery(getProductsById, {
+    variables: { id },
+  });
   const [singleProduct, setSingleProduct] = useState(null);
-  const [reviews, setReviews] = useState(null);
   const [newItems, setnewItems] = useState("");
 
-  const handleAddReviews = (e) => {
-    e.preventDefault();
-    let form = e.target;
-    let review = form.comment.value;
+  // const handleAddReviews = (e) => {
+  //   e.preventDefault();
+  //   let form = e.target;
+  //   let review = form.comment.value;
 
-    axios
-      .post(`${apiKey}reviews/${params.productid}`, {
-        username: currentUser.username,
-        review: review,
-        products_id: params.productid,
-      })
-      .then((response) => {
-        loadReviews(params.productid);
-        form.reset();
-      });
-  };
+  //   axios
+  //     .post(`${apiKey}reviews/${params.productid}`, {
+  //       username: currentUser.username,
+  //       review: review,
+  //       products_id: params.productid,
+  //     })
+  //     .then((response) => {
+  //       loadReviews(params.productid);
+  //       form.reset();
+  //     });
+  // };
 
   const handleCartItem = () => {
     const products = JSON.parse(localStorage.getItem("products") || "[]");
@@ -38,27 +42,11 @@ function SingleProduct({ currentUser }) {
     localStorage.setItem("products", JSON.stringify(products));
   };
 
-  const loadReviews = (id) => {
-    axios
-      .get(
-        `https://shopitall-server.herokuapp.com/api/v1/products/reviews/${id}`
-      )
-      .then((response) => {
-        setReviews(response.data);
-      });
-  };
-
   useEffect(() => {
-    axios
-      .get(
-        `https://shopitall-server.herokuapp.com/api/v1/products/${params.productid}`
-      )
-      .then((response) => {
-        setSingleProduct(response.data);
-      });
-    setnewItems(singleProduct);
-    loadReviews(params.productid);
-  }, [params.productid, singleProduct]);
+    if (data) {
+      setSingleProduct(data);
+    }
+  }, [data]);
 
   let date = (date) => {
     let dates = new Date(date);
@@ -82,16 +70,16 @@ function SingleProduct({ currentUser }) {
           <div className="singleproduct__item-box">
             <img
               className="singleproduct__img"
-              src={singleProduct[0].image}
-              alt={singleProduct[0].product_name}
+              src={singleProduct.productsById.image}
+              alt={singleProduct.productsById.product_name}
             />
             <section className="singleproduct__details">
               <div className="singleproduct__pramary-info">
                 <div className="singleproduct__pramary-info-header">
                   <span className="singleproduct__item-name">
-                    {singleProduct[0].product_name}
+                    {singleProduct.productsById.product_name}
                   </span>
-                  <span className="singleproduct__item-price">{`$${singleProduct[0].price}`}</span>
+                  <span className="singleproduct__item-price">{`$${singleProduct.productsById.price}`}</span>
                 </div>
                 <div className="singleproduct__secundary-details">
                   <h2>Size:</h2>
@@ -115,7 +103,7 @@ function SingleProduct({ currentUser }) {
                   <h3 className="singleproduct__description-title">
                     Description
                   </h3>
-                  {singleProduct[0].description}
+                  {singleProduct.productsById.description}
                 </div>
               </div>
             </section>
@@ -123,7 +111,7 @@ function SingleProduct({ currentUser }) {
           <form
             action=""
             className="singleproduct__form"
-            onSubmit={handleAddReviews}
+            // onSubmit={handleAddReviews}
           >
             <label htmlFor="comment" className="singleproduct__form-label">
               Review
@@ -137,8 +125,8 @@ function SingleProduct({ currentUser }) {
             <button className="singleproduct__form-button">Review</button>
           </form>
           <section className="singleproduct__comments">
-            {reviews &&
-              reviews.map((review) => {
+            {singleProduct.productsById.reviews &&
+              singleProduct.productsById.reviews.map((review) => {
                 return (
                   <ReviewsCard
                     key={review.id}

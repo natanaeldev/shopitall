@@ -37,7 +37,7 @@
     "mongoose": "^6.3.3",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
-    "stripe": "^8.215.0",
+    "stripe": "^8.222.0",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {

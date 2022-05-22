@@ -3,23 +3,27 @@ import { Link, Outlet, useParams } from "react-router-dom";
 
 import ProductsCard from "../ProductsCard/ProductsCard";
 import "./Products.scss";
-import axios from "axios";
+import { GetProductsByCategory } from "../../graphql/query/query.graphql";
+import { useQuery } from "@apollo/client";
 
 function Products({ productsContent }) {
-  const apiKey = process.env.REACT_APP_API_URL;
   const params = useParams();
+  const category = params.category;
+
+  const { loading, errors, data } = useQuery(GetProductsByCategory, {
+    variables: { category },
+  });
+
   const [contentByCategory, setContentByCategory] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`${apiKey}products/category/${params.category}`)
-      .then((response) => {
-        setContentByCategory(response.data);
-      });
-  }, [params.category, apiKey]);
+    if (data) {
+      setContentByCategory(data);
+    }
+  }, [data]);
 
   return (
-    contentByCategory && (
+    productsContent && (
       <div className="products">
         <div className="products__wrapper">
           {!params.category ? (
@@ -31,25 +35,26 @@ function Products({ productsContent }) {
           )}
           <div className="products__wrapperTablet">
             {!params.category
-              ? productsContent.map((product) => {
+              ? productsContent.products.map((product) => {
                   return (
                     <Link
-                      to={`/products/${product.id}`}
+                      to={`/products/${product._id}`}
                       className="products__link"
                       key={product.id}
                     >
-                      <ProductsCard key={product.id} product={product} />
+                      <ProductsCard key={product._id} product={product} />
                     </Link>
                   );
                 })
-              : contentByCategory.map((product) => {
+              : contentByCategory &&
+                contentByCategory.productsByCategory.map((product) => {
                   return (
                     <Link
-                      to={`/products/${product.id}`}
+                      to={`/products/${product._id}`}
                       className="products__link"
                       key={product.id}
                     >
-                      <ProductsCard key={product.id} product={product} />
+                      <ProductsCard key={product._id} product={product} />
                     </Link>
                   );
                 })}
@@ -59,6 +64,8 @@ function Products({ productsContent }) {
       </div>
     )
   );
+
+  // );
 }
 
 export default Products;

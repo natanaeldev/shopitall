@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: process.env.REACT_API_URL,
+  uri: process.env.REACT_APP_API_URL,
   cache: new InMemoryCache(),
 });
 

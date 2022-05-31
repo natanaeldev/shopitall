@@ -17,7 +17,9 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 
 app.use("/api/v1/products", productsRouter);
-app.get("/api/v1/", (req, res) => res.send("Hello World!"));
+app.get("/api/v1/", (req, res) => {
+  return res.send("hello world");
+});
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("../client/build"));

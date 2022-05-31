@@ -2,37 +2,36 @@ const mongoose = require("mongoose");
 const Float = require("mongoose-float").loadType(mongoose);
 
 const productSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+  },
   product_name: {
     type: String,
     required: true,
   },
   image: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    required: true,
+    type: Array,
   },
   price: {
-    type: Float,
-    required: true,
+    price_id: {
+      type: String,
+    },
+    amount: {
+      type: Float,
+    },
   },
   size: {
     type: String,
-    required: true,
   },
   description: {
     type: String,
-    required: true,
   },
   category: {
     type: String,
-    required: true,
   },
   quantity: {
     type: Number,
-    required: true,
   },
 });
 

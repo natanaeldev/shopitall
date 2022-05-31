@@ -4,7 +4,7 @@ import CartItem from "../CartItem/CartItem";
 import "./Cart.scss";
 
 function Cart({ handleCheckout, productsContent }) {
-  const [products, setProducts] = useState(false);
+  const [products, setProducts] = useState([]);
 
   const loadLocalStorageItem = () => {
     const data = JSON.parse(localStorage.getItem("products"));
@@ -44,7 +44,7 @@ function Cart({ handleCheckout, productsContent }) {
           <div className="cart__emptyMessages">Cart Empty</div>
         ) : (
           <ul className="cart__cartitems">
-            {products.map((product) => {
+            {products?.map((product) => {
               return (
                 <CartItem
                   products={product}

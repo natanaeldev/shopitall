@@ -3,16 +3,19 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const {
   getProductsById,
-  getAllProducts,
+  getPrices,
   getProductsByCategory,
+  getAllStripeProducts,
 } = require("../../model/product/products.model");
 
 const YOUR_DOMAIN = process.env.YOUR_DOMAIN;
 
+/**
+ */
 async function httpGetAllProducts(req, res) {
-  await getAllProducts().then((product) => {
-    return res.status(200).json(product);
-  });
+  const stripeProducts = await getAllStripeProducts();
+
+  return await res.status(200).json(stripeProducts);
 }
 
 async function httpGetProductsById(req, res) {
@@ -34,41 +37,18 @@ async function httpGetProductsByCategory(req, res) {
       return res.status(200).json(product);
     })
     .catch((err) => {
-      res.status(404).json({ message: "products not found" });
+      res.status(404).json({ message: "products not found", error: err });
     });
-}
-
-async function httpCreateProduct(req, res) {
-  const products = await getAllProducts();
-
-  products.forEach(async (product) => {
-    await stripe.products.create({
-      name: product.product_name,
-      id: product._id,
-    });
-  });
-}
-
-async function httpCreatePrice(req, res) {
-  const data = req.body;
-  const product = await getProductsById(data._id);
-
-  const price = await stripe.prices.create({
-    unit_amount: product.price,
-    currency: "usd",
-    product: product._id.toString(),
-  });
 }
 
 async function httpCreateCheckOutSessions(req, res) {
-  const data = req.body;
+  const data = req.params;
 
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: `{{${price}}}`,
-        quantity: data.quatity,
+        price: data.price_id,
+        quantity: 1,
       },
     ],
     mode: "payment",
@@ -80,8 +60,6 @@ async function httpCreateCheckOutSessions(req, res) {
 }
 
 module.exports = {
-  httpCreateProduct,
-  httpCreatePrice,
   httpCreateCheckOutSessions,
   httpGetAllProducts,
   httpGetProductsById,

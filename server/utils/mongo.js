@@ -14,7 +14,10 @@ mongoose.connection.on("error", (err) => {
 });
 
 async function connectMongoDB() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(MONGO_URL, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  });
 }
 
 module.exports = {

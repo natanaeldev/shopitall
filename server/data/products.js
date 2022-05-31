@@ -1,4 +1,4 @@
-module.exports.products = [
+[
   {
     product_name: "Brown Jacket",
     image: "http://localhost:8080/images/Man/brown-jacket.jpg",

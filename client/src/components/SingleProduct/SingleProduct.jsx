@@ -36,12 +36,14 @@ function SingleProduct({ currentUser }) {
     axios.get(`${apiKey}products/${id}`).then((response) => {
       setSingleProduct(response.data);
     });
+    setnewItems(singleProduct);
   }, [id]);
 
   const handleCartItem = () => {
-    const products = JSON.parse(localStorage.getItem("products") || "[]");
-    const product = newItems;
-    products.push(product[0]);
+    let products = JSON.parse(localStorage.getItem("products") || "[]");
+    products = newItems;
+
+    console.log(products);
     localStorage.setItem("products", JSON.stringify(products));
   };
 
@@ -67,16 +69,21 @@ function SingleProduct({ currentUser }) {
           <div className="singleproduct__item-box">
             <img
               className="singleproduct__img"
-              src={singleProduct.image}
-              alt={singleProduct.product_name}
+              src={singleProduct?.images}
+              alt={singleProduct?.name}
             />
             <section className="singleproduct__details">
               <div className="singleproduct__pramary-info">
                 <div className="singleproduct__pramary-info-header">
                   <span className="singleproduct__item-name">
-                    {singleProduct.product_name}
+                    {singleProduct?.name}
                   </span>
-                  <span className="singleproduct__item-price">{`$${singleProduct.price}`}</span>
+                  <span className="singleproduct__item-price">{`$${
+                    isNaN(singleProduct?.default_price?.unit_amount / 100) ===
+                    true
+                      ? 0
+                      : singleProduct?.default_price?.unit_amount / 100
+                  }`}</span>
                 </div>
                 <div className="singleproduct__secundary-details">
                   <h2>Size:</h2>
@@ -100,7 +107,7 @@ function SingleProduct({ currentUser }) {
                   <h3 className="singleproduct__description-title">
                     Description
                   </h3>
-                  {singleProduct.description}
+                  {singleProduct?.description}
                 </div>
               </div>
             </section>

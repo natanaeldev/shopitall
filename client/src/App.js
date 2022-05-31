@@ -135,7 +135,7 @@ function App() {
             />
           }
         />
-        {/*
+
         <Route
           path="/cart"
           element={
@@ -159,7 +159,7 @@ function App() {
               handleCartCount={handleCartCount}
             />
           }
-        /> */}
+        />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
       <Footer />

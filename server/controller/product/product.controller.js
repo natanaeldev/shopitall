@@ -42,12 +42,12 @@ async function httpGetProductsByCategory(req, res) {
 }
 
 async function httpCreateCheckOutSessions(req, res) {
-  const data = req.params;
-
+  const data = req.body;
+  console.log(data);
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        price: data.price_id,
+        price: data.price,
         quantity: 1,
       },
     ],
@@ -56,7 +56,7 @@ async function httpCreateCheckOutSessions(req, res) {
     cancel_url: `${YOUR_DOMAIN}?canceled=true`,
   });
 
-  res.redirect(303, session.url);
+  res.json({ url: session.url });
 }
 
 module.exports = {

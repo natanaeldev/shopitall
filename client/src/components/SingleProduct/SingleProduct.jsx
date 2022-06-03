@@ -7,13 +7,12 @@ import "./SingleProduct.scss";
 import ReviewsCard from "../ReviewsCard/ReviewsCard";
 const apiKey = process.env.REACT_APP_API_URL;
 
-function SingleProduct({ currentUser }) {
+function SingleProduct({ currentUser, addProduct }) {
   const navigate = useNavigate();
   const params = useParams();
   let id = params.productid;
 
   const [singleProduct, setSingleProduct] = useState(null);
-  const [newItems, setnewItems] = useState("");
 
   const handleAddReviews = (e) => {
     e.preventDefault();
@@ -36,16 +35,7 @@ function SingleProduct({ currentUser }) {
     axios.get(`${apiKey}products/${id}`).then((response) => {
       setSingleProduct(response.data);
     });
-    setnewItems(singleProduct);
   }, [id]);
-
-  const handleCartItem = () => {
-    let products = JSON.parse(localStorage.getItem("products") || "[]");
-    products = newItems;
-
-    console.log(products);
-    localStorage.setItem("products", JSON.stringify(products));
-  };
 
   let date = (date) => {
     let dates = new Date(date);
@@ -91,8 +81,7 @@ function SingleProduct({ currentUser }) {
                   <button
                     className="singleproduct__item-button"
                     onClick={(e) => {
-                      // handleCartCount(e, JSON.parse(items));
-                      handleCartItem();
+                      addProduct(singleProduct);
                     }}
                   >
                     Add to cart

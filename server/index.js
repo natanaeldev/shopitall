@@ -11,7 +11,7 @@ const { connectMongoDB } = require("./utils/mongo");
 
 const productsRouter = require("./routes/products/products.router");
 
-app.use(cors());
+app.use(cors("*"));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static("public"));

@@ -3,7 +3,7 @@ import React from "react";
 import "./CartItem.scss";
 // import image from "../../assets/images/products-img/Man/brown-jacket.jpg";
 
-function CartItem({ products, handleRemoveItem }) {
+function CartItem({ products, removeProducts }) {
   return (
     <li className="cartitem">
       <div className="cartitem__wrapper">
@@ -40,7 +40,7 @@ function CartItem({ products, handleRemoveItem }) {
             </select>
             <button
               className="cartitem__info-button"
-              onClick={handleRemoveItem}
+              onClick={() => removeProducts(products)}
             >
               Remove Item
             </button>

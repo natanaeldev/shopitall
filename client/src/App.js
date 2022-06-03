@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useState, useReducer } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import axios from "axios";
@@ -12,11 +12,21 @@ import SignInPage from "./pages/SignInPage/SignInPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import CartPage from "./pages/CartPage/CartPage";
 import AboutPage from "./pages/AboutPage/AboutPage";
+import cartReducer, { sumItems } from "./hooks/reducer";
 
 import "./App.scss";
 import { speedDialActionClasses } from "@mui/material";
 
 const apiKey = process.env.REACT_APP_API_URL;
+
+const cartFromStorage = localStorage.getItem("cart")
+  ? JSON.parse(localStorage.getItem("cart"))
+  : [];
+
+const initialState = {
+  cartItems: cartFromStorage,
+  ...sumItems(cartFromStorage),
+};
 
 function App() {
   const [productsContent, setProductContent] = useState(null);
@@ -27,6 +37,15 @@ function App() {
   const [success, setSuccess] = useState(false);
   const [failedAuth, setFailAuth] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [state, dispatch] = useReducer(cartReducer, initialState);
+
+  const addProduct = (product) => {
+    dispatch({ type: "ADD_ITEM", payload: product });
+  };
+
+  const removeProducts = (product) => {
+    dispatch({ type: "REMOVE_ITEM", payload: product });
+  };
 
   const loadData = () => {
     const products = axios
@@ -48,15 +67,6 @@ function App() {
       sessionStorage.removeItem("token");
       setCurrentUser(null);
       setSuccess(false);
-    }
-  };
-
-  const handleCartCount = (data) => {
-    if (data !== null) {
-      data.forEach((element) => {
-        let elements = element + 1;
-        setcartCount(cartCount + elements);
-      });
     }
   };
 
@@ -85,18 +95,6 @@ function App() {
       .catch((err) => {
         setError(err.response.data);
       });
-  };
-
-  const handleCheckout = (e, data) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    axios
-      .post(`${apiKey}create-checkout-session`, {
-        products: data,
-      })
-      .then((response) => {})
-      .catch((error) => {});
   };
 
   useEffect(() => {
@@ -130,8 +128,8 @@ function App() {
           path="products/:productid"
           element={
             <SingleProductPage
-              handleCartCount={handleCartCount}
               currentUser={currentUser}
+              addProduct={addProduct}
             />
           }
         />
@@ -140,8 +138,8 @@ function App() {
           path="/cart"
           element={
             <CartPage
-              handleCheckout={handleCheckout}
               productsContent={productsContent}
+              removeProducts={removeProducts}
             />
           }
         />
@@ -156,7 +154,6 @@ function App() {
               error={error}
               userSignUp={userSignUp}
               handleSignUp={handleSignUp}
-              handleCartCount={handleCartCount}
             />
           }
         />

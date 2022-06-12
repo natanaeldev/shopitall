@@ -1,10 +1,10 @@
 import React from "react";
 import SignIn from "../../components/SignIn/SignIn";
 
-function SignInPage({ success, error, mutateSignIn }) {
+function SignInPage({ success, error, handleLogIn }) {
   return (
     <section className="signin">
-      <SignIn success={success} error={error} mutateSignIn={mutateSignIn} />
+      <SignIn success={success} error={error} handleLogIn={handleLogIn} />
     </section>
   );
 }

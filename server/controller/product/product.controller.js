@@ -43,14 +43,13 @@ async function httpGetProductsByCategory(req, res) {
 
 async function httpCreateCheckOutSessions(req, res) {
   const data = req.body;
-  console.log(data);
+
+  let line_items = data.map((product) => {
+    return { price: product.price, quantity: 1 };
+  });
+
   const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: data.price,
-        quantity: 1,
-      },
-    ],
+    line_items,
     mode: "payment",
     success_url: `${YOUR_DOMAIN}?success=true`,
     cancel_url: `${YOUR_DOMAIN}?canceled=true`,

@@ -60,6 +60,28 @@ function App() {
     return products;
   };
 
+  const handleLogIn = (e) => {
+    e.preventDefault();
+
+    let form = e.target;
+    let username = form.username.value;
+    let password = form.password.value;
+
+    axios
+      .post(`${apiKey}user/signin`, {
+        username,
+        password,
+      })
+      .then((response) => {
+        if (response.data.token) {
+          form.reset();
+          setSuccess(true);
+          sessionStorage.setItem("token", response.data.token);
+        } else {
+          setFailAuth(true);
+        }
+      });
+  };
   const handleSignOut = (e) => {
     e.preventDefault();
 
@@ -67,6 +89,28 @@ function App() {
       sessionStorage.removeItem("token");
       setCurrentUser(null);
       setSuccess(false);
+    }
+  };
+
+  const getCurrentUser = (token) => {
+    try {
+      if (token) {
+        axios
+          .get(`${apiKey}user/currentuser`, {
+            headers: {
+              Authorization: `bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response !== null) {
+              setCurrentUser(response.data);
+            }
+
+            setFailAuth(true);
+          });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -80,7 +124,7 @@ function App() {
     let password = form.password.value;
 
     axios
-      .post(`${apiKey}register`, {
+      .post(`${apiKey}user/signup`, {
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -98,14 +142,17 @@ function App() {
   };
 
   useEffect(() => {
+    const token = sessionStorage.getItem("token");
     loadData();
+
+    getCurrentUser(token);
   }, []);
 
   return (
     <BrowserRouter>
       <NavBar
         success={success}
-        firstname={currentUser}
+        currentUser={currentUser}
         handleSignOut={handleSignOut}
         cartCount={cartCount}
         failedAuth={failedAuth}
@@ -145,7 +192,13 @@ function App() {
         />
         <Route
           path="/signin"
-          element={<SignInPage error={error} succes cs />}
+          element={
+            <SignInPage
+              error={error}
+              success={success}
+              handleLogIn={handleLogIn}
+            />
+          }
         />
         <Route
           path="/signup"

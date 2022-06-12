@@ -16,18 +16,21 @@ function Cart({ removeProducts }) {
     setProducts(data);
   };
 
-  const handleCheckOut = (e) => {
+  const handleCheckOut = async (e) => {
     e.preventDefault();
-    products.forEach(async (product) => {
-      let response = await axios.post(
-        `${apiKey}products/create-checkout-session`,
-        {
-          price: product.default_price.id,
-        }
-      );
 
-      window.location = response.data.url;
+    let productPrices = products.map((product) => {
+      return {
+        price: product.default_price.id,
+      };
     });
+
+    let response = await axios.post(
+      `${apiKey}products/create-checkout-session`,
+      productPrices
+    );
+
+    window.location = response.data.url;
   };
 
   useEffect(() => {

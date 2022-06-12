@@ -10,6 +10,7 @@ const morgan = require("morgan");
 const { connectMongoDB } = require("./utils/mongo");
 
 const productsRouter = require("./routes/products/products.router");
+const usersRouter = require("./routes/user/user.router");
 
 app.use(cors("*"));
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 
 app.use("/api/v1/products", productsRouter);
+app.use("/api/v1/user", usersRouter);
 app.get("/api/v1/", (req, res) => {
   return res.send("hello world");
 });

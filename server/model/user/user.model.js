@@ -1,59 +1,51 @@
-const { UserInputError } = require("apollo-server");
 const User = require("../user/user.mongo");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
-async function signUp(firstname, lastname, email, username, password) {
-  if (!firstname || !lastname || !email || !username || !password) {
-    throw new UserInputError("Please enter the required fields.");
+async function signUp(newUser) {
+  const { id, firstname, lastname, email, username, password } = newUser;
+
+  let userEmail = await User.findOne({ email });
+
+  if (userEmail) {
+    return { message: "Please use a unique email" };
   }
 
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const newUser = new User({
+  let user = await new User({
+    id,
     firstname,
     lastname,
     email,
     username,
-    password: hashedPassword,
+    password,
+  }).save((error, result) => {
+    if (error) {
+      return error;
+    } else {
+      return result;
+    }
   });
 
-  return await newUser.save();
-}
-
-async function signIn(username, password) {
-  if (!username || !password) {
-    throw new UserInputError("Please enter the required field ");
-  }
-
-  const user = await User.findOne({ username: username });
-  const isPasswordCorrect = bcrypt.compareSync(password, user.password);
-
-  if (!isPasswordCorrect) {
-    throw new UserInputError("Password Incorrect");
-  }
-
   return {
-    token: jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
-    }),
+    user,
+    message: "register Sucessfully",
   };
 }
 
-// async function currentUser(users) {
-//   if (!users.headers.authorization) {
-//     throw new UserInputError("Please login");
-//   }
+async function signIn(username) {
+  const user = await User.findOne({ username: username });
+  return user;
+}
 
-//   const token = users.headers.authorization || "";
-//   // const user = getUser(token);
+async function currentUser(username) {
+  const currentUser = await User.findOne(
+    { username },
+    { __v: 0, _id: 0, password: 0 }
+  );
 
-//   if (!user) throw new AuthenticationError("you must be logged in");
-
-//   return { user };
-// }
+  return currentUser;
+}
 
 module.exports = {
   signUp,
   signIn,
-  // currentUser,
+  currentUser,
 };

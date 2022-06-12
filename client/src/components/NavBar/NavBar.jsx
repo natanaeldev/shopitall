@@ -8,7 +8,7 @@ import NavBarItem from "../NavBarItem/NavBarItem";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import "./NavBar.scss";
 
-function NavBar({ success, firstname, handleSignOut, cartCount }) {
+function NavBar({ success, currentUser, handleSignOut, cartCount }) {
   //States
   const [activeMenu, setActiveMenu] = useState(false);
 
@@ -50,7 +50,7 @@ function NavBar({ success, firstname, handleSignOut, cartCount }) {
           <NavBarItem
             closeMenu={closeMenu}
             success={success}
-            firstname={firstname}
+            currentUser={currentUser}
             handleSignOut={handleSignOut}
           />
         </ul>
@@ -68,7 +68,7 @@ function NavBar({ success, firstname, handleSignOut, cartCount }) {
             <NavBarItem
               closeMenu={closeMenu}
               success={success}
-              firstname={firstname}
+              currentUser={currentUser}
               handleSignOut={handleSignOut}
             />
           </ul>

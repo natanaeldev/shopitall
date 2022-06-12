@@ -2,13 +2,10 @@ import React from "react";
 import SingleProduct from "../../components/SingleProduct/SingleProduct";
 import "./SingleProductPage.scss";
 
-function SingleProductPage({ handleCartCount, currentUser }) {
+function SingleProductPage({ addProduct, currentUser }) {
   return (
     <section>
-      <SingleProduct
-        handleCartCount={handleCartCount}
-        currentUser={currentUser}
-      />
+      <SingleProduct addProduct={addProduct} currentUser={currentUser} />
     </section>
   );
 }

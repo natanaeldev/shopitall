@@ -3,20 +3,23 @@ import React from "react";
 import "./CartItem.scss";
 // import image from "../../assets/images/products-img/Man/brown-jacket.jpg";
 
-function CartItem({ products, handleRemoveItem }) {
+function CartItem({ products, removeProducts }) {
   return (
     <li className="cartitem">
       <div className="cartitem__wrapper">
         <div className="cartitem__header">
-          <img className="cartitem__header-img" src={products.image} alt="" />
+          <img className="cartitem__header-img" src={products.images} alt="" />
         </div>
         <div className="cartitem__info">
           <div className="cartitem__info-header">
-            <p className="cartitem__info-header-name">
-              {products.product_name}
-            </p>
+            <p className="cartitem__info-header-name">{products.name}</p>
             <p className="cartitem__info-header-title">Price:</p>
-            <p className="cartitem__info-header-price">${products.price}</p>
+            <p className="cartitem__info-header-price">
+              $
+              {isNaN(products.default_price?.unit_amount / 100) === true
+                ? 0
+                : products.default_price?.unit_amount / 100}
+            </p>
           </div>
           <div className="cartitem__info-options">
             <label
@@ -37,7 +40,7 @@ function CartItem({ products, handleRemoveItem }) {
             </select>
             <button
               className="cartitem__info-button"
-              onClick={handleRemoveItem}
+              onClick={() => removeProducts(products)}
             >
               Remove Item
             </button>

@@ -1,24 +1,36 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 import CartItem from "../CartItem/CartItem";
+import cartReducer, { sumItems } from "../../hooks/reducer";
 import "./Cart.scss";
 
-function Cart({ handleCheckout, productsContent }) {
-  const [products, setProducts] = useState(false);
+const apiKey = process.env.REACT_APP_API_URL;
+
+function Cart({ removeProducts }) {
+  const [products, setProducts] = useState([]);
 
   const loadLocalStorageItem = () => {
-    const data = JSON.parse(localStorage.getItem("products"));
+    const data = JSON.parse(localStorage.getItem("cart"));
 
     setProducts(data);
   };
 
-  const handleRemoveItem = (product_id) => {
-    var product = JSON.parse(localStorage.getItem("products"));
-    const index = product.findIndex((product) => product.id === product_id);
+  const handleCheckOut = async (e) => {
+    e.preventDefault();
 
-    product.splice(index, 1);
+    let productPrices = products.map((product) => {
+      return {
+        price: product.default_price.id,
+      };
+    });
 
-    localStorage.setItem("products", JSON.stringify(product));
+    let response = await axios.post(
+      `${apiKey}products/create-checkout-session`,
+      productPrices
+    );
+
+    window.location = response.data.url;
   };
 
   useEffect(() => {
@@ -30,12 +42,8 @@ function Cart({ handleCheckout, productsContent }) {
       <div className="cart__wrapper">
         <div className="cart__header">
           <h2 className="cart__header-title">Cart</h2>
-          <form>
-            <button
-              type="submit"
-              onClick={() => handleCheckout(products)}
-              className="cart__header-buttton"
-            >
+          <form onClick={handleCheckOut}>
+            <button type="submit" className="cart__header-buttton">
               Checkout
             </button>
           </form>
@@ -44,12 +52,9 @@ function Cart({ handleCheckout, productsContent }) {
           <div className="cart__emptyMessages">Cart Empty</div>
         ) : (
           <ul className="cart__cartitems">
-            {products.map((product) => {
+            {products?.map((product) => {
               return (
-                <CartItem
-                  products={product}
-                  handleRemoveItem={() => handleRemoveItem(product.id)}
-                />
+                <CartItem products={product} removeProducts={removeProducts} />
               );
             })}
           </ul>

@@ -1,11 +1,11 @@
 require("dotenv").config();
-const express = require("express");
-const router = express.Router();
-const knex = require("../knexfile-config");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
 
-router.post("/register", (req, res) => {
+const { signIn, signUp, currentUser } = require("../../model/user/user.model");
+
+async function httpSignUp(req, res) {
   const { firstname, lastname, email, username, password } = req.body;
 
   if (!firstname || !lastname || !email || !username || !password) {
@@ -15,6 +15,7 @@ router.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   const newUser = {
+    id: uuidv4(),
     firstname,
     lastname,
     email,
@@ -22,26 +23,26 @@ router.post("/register", (req, res) => {
     password: hashedPassword,
   };
 
-  knex("user")
-    .insert(newUser)
-    .then((data) => {
-      res.status(200).send("registered succesfully");
+  signUp(newUser)
+    .then((response) => {
+      console.log(response);
+      res.status(200).json({
+        user: response,
+      });
     })
     .catch((error) => {
-      res.status(400).send("Failed registration");
+      res.status(400).json({ messsage: "Failded to registed", error: error });
     });
-});
+}
 
-router.post("/users/login", (req, res) => {
+async function httpSignIn(req, res) {
   const { username, password } = req.body;
 
   if (!username || !password) {
     return res.status(400).send("Please enter the required field ");
   }
 
-  knex("user")
-    .where({ username: username })
-    .first()
+  signIn(username)
     .then((user) => {
       const isPasswordCorrect = bcrypt.compareSync(password, user.password);
 
@@ -58,9 +59,9 @@ router.post("/users/login", (req, res) => {
     .catch((error) => {
       res.status(400).send("Invalid credentials");
     });
-});
+}
 
-router.get("/users/current", (req, res) => {
+async function httpCurrentUser(req, res) {
   if (!req.headers.authorization) {
     return res.status(401).send("Please login");
   }
@@ -71,15 +72,16 @@ router.get("/users/current", (req, res) => {
     if (err) {
       return res.status(401).send("Invalid auth token");
     }
-
-    knex("user")
-      .where({ username: decoded.username })
-      .first()
-      .then((user) => {
-        delete user.password;
-        res.json(user);
-      });
+    console.log(decoded.username);
+    currentUser(decoded.username).then((user) => {
+      delete user.password;
+      res.status(200).json({ user });
+    });
   });
-});
+}
 
-module.exports = router;
+module.exports = {
+  httpSignIn,
+  httpSignUp,
+  httpCurrentUser,
+};

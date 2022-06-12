@@ -5,14 +5,14 @@ import axios from "axios";
 
 import "./SingleProduct.scss";
 import ReviewsCard from "../ReviewsCard/ReviewsCard";
+const apiKey = process.env.REACT_APP_API_URL;
 
-function SingleProduct({ currentUser }) {
-  const apiKey = process.env.REACT_APP_API_URL;
+function SingleProduct({ currentUser, addProduct }) {
   const navigate = useNavigate();
   const params = useParams();
+  let id = params.productid;
+
   const [singleProduct, setSingleProduct] = useState(null);
-  const [reviews, setReviews] = useState(null);
-  const [newItems, setnewItems] = useState("");
 
   const handleAddReviews = (e) => {
     e.preventDefault();
@@ -20,45 +20,22 @@ function SingleProduct({ currentUser }) {
     let review = form.comment.value;
 
     axios
-      .post(`${apiKey}reviews/${params.productid}`, {
+      .post(`${apiKey}reviews/${id}`, {
         username: currentUser.username,
         review: review,
         products_id: params.productid,
       })
       .then((response) => {
-        loadReviews(params.productid);
+        // loadReviews(id);
         form.reset();
       });
   };
 
-  const handleCartItem = () => {
-    const products = JSON.parse(localStorage.getItem("products") || "[]");
-    const product = newItems;
-    products.push(product[0]);
-    localStorage.setItem("products", JSON.stringify(products));
-  };
-
-  const loadReviews = (id) => {
-    axios
-      .get(
-        `https://shopitall-server.herokuapp.com/api/v1/products/reviews/${id}`
-      )
-      .then((response) => {
-        setReviews(response.data);
-      });
-  };
-
   useEffect(() => {
-    axios
-      .get(
-        `https://shopitall-server.herokuapp.com/api/v1/products/${params.productid}`
-      )
-      .then((response) => {
-        setSingleProduct(response.data);
-      });
-    setnewItems(singleProduct);
-    loadReviews(params.productid);
-  }, [params.productid, singleProduct]);
+    axios.get(`${apiKey}products/${id}`).then((response) => {
+      setSingleProduct(response.data);
+    });
+  }, [id]);
 
   let date = (date) => {
     let dates = new Date(date);
@@ -82,16 +59,21 @@ function SingleProduct({ currentUser }) {
           <div className="singleproduct__item-box">
             <img
               className="singleproduct__img"
-              src={singleProduct[0].image}
-              alt={singleProduct[0].product_name}
+              src={singleProduct?.images}
+              alt={singleProduct?.name}
             />
             <section className="singleproduct__details">
               <div className="singleproduct__pramary-info">
                 <div className="singleproduct__pramary-info-header">
                   <span className="singleproduct__item-name">
-                    {singleProduct[0].product_name}
+                    {singleProduct?.name}
                   </span>
-                  <span className="singleproduct__item-price">{`$${singleProduct[0].price}`}</span>
+                  <span className="singleproduct__item-price">{`$${
+                    isNaN(singleProduct?.default_price?.unit_amount / 100) ===
+                    true
+                      ? 0
+                      : singleProduct?.default_price?.unit_amount / 100
+                  }`}</span>
                 </div>
                 <div className="singleproduct__secundary-details">
                   <h2>Size:</h2>
@@ -99,8 +81,7 @@ function SingleProduct({ currentUser }) {
                   <button
                     className="singleproduct__item-button"
                     onClick={(e) => {
-                      // handleCartCount(e, JSON.parse(items));
-                      handleCartItem();
+                      addProduct(singleProduct);
                     }}
                   >
                     Add to cart
@@ -115,7 +96,7 @@ function SingleProduct({ currentUser }) {
                   <h3 className="singleproduct__description-title">
                     Description
                   </h3>
-                  {singleProduct[0].description}
+                  {singleProduct?.description}
                 </div>
               </div>
             </section>
@@ -123,7 +104,7 @@ function SingleProduct({ currentUser }) {
           <form
             action=""
             className="singleproduct__form"
-            onSubmit={handleAddReviews}
+            // onSubmit={handleAddReviews}
           >
             <label htmlFor="comment" className="singleproduct__form-label">
               Review
@@ -137,8 +118,8 @@ function SingleProduct({ currentUser }) {
             <button className="singleproduct__form-button">Review</button>
           </form>
           <section className="singleproduct__comments">
-            {reviews &&
-              reviews.map((review) => {
+            {singleProduct.reviews &&
+              singleProduct.reviews.map((review) => {
                 return (
                   <ReviewsCard
                     key={review.id}

@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import axios from "axios";
+
 import "./SignIn.scss";
 
-function SignIn({ success, error, handleSubmit }) {
+function SignIn({ error, success, handleLogIn }) {
   return (
     <div className="signin">
       <div className="signin__wrapper">
         <h2 className="signin__title">Sign In</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogIn}>
           <label htmlFor="username" className="signin__username-label">
             Username:
             <input

@@ -1,5 +1,6 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useState, useReducer } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import axios from "axios";
 
 import HomePage from "./pages/HomePage/HomePage";
@@ -11,10 +12,21 @@ import SignInPage from "./pages/SignInPage/SignInPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import CartPage from "./pages/CartPage/CartPage";
 import AboutPage from "./pages/AboutPage/AboutPage";
+import cartReducer, { sumItems } from "./hooks/reducer";
 
 import "./App.scss";
+import { speedDialActionClasses } from "@mui/material";
 
 const apiKey = process.env.REACT_APP_API_URL;
+
+const cartFromStorage = localStorage.getItem("cart")
+  ? JSON.parse(localStorage.getItem("cart"))
+  : [];
+
+const initialState = {
+  cartItems: cartFromStorage,
+  ...sumItems(cartFromStorage),
+};
 
 function App() {
   const [productsContent, setProductContent] = useState(null);
@@ -25,7 +37,51 @@ function App() {
   const [success, setSuccess] = useState(false);
   const [failedAuth, setFailAuth] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [state, dispatch] = useReducer(cartReducer, initialState);
 
+  const addProduct = (product) => {
+    dispatch({ type: "ADD_ITEM", payload: product });
+  };
+
+  const removeProducts = (product) => {
+    dispatch({ type: "REMOVE_ITEM", payload: product });
+  };
+
+  const loadData = () => {
+    const products = axios
+      .get(`${apiKey}products`)
+      .then((response) => {
+        setProductContent(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    return products;
+  };
+
+  const handleLogIn = (e) => {
+    e.preventDefault();
+
+    let form = e.target;
+    let username = form.username.value;
+    let password = form.password.value;
+
+    axios
+      .post(`${apiKey}user/signin`, {
+        username,
+        password,
+      })
+      .then((response) => {
+        if (response.data.token) {
+          form.reset();
+          setSuccess(true);
+          sessionStorage.setItem("token", response.data.token);
+        } else {
+          setFailAuth(true);
+        }
+      });
+  };
   const handleSignOut = (e) => {
     e.preventDefault();
 
@@ -36,33 +92,26 @@ function App() {
     }
   };
 
-  const handleCartCount = (data) => {
-    if (data !== null) {
-      data.forEach((element) => {
-        let elements = element + 1;
-        setcartCount(cartCount + elements);
-      });
+  const getCurrentUser = (token) => {
+    try {
+      if (token) {
+        axios
+          .get(`${apiKey}user/currentuser`, {
+            headers: {
+              Authorization: `bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response !== null) {
+              setCurrentUser(response.data);
+            }
+
+            setFailAuth(true);
+          });
+      }
+    } catch (error) {
+      console.log(error);
     }
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let form = e.target;
-
-    let username = form.username.value;
-    let password = form.password.value;
-
-    axios
-      .post(`${apiKey}users/login`, {
-        username: username,
-        password: password,
-      })
-      .then((response) => {
-        sessionStorage.setItem("token", response.data.token);
-        setSuccess(true);
-      })
-      .catch((err) => {
-        setError(err.response.data);
-      });
   };
 
   const handleSignUp = (e) => {
@@ -75,7 +124,7 @@ function App() {
     let password = form.password.value;
 
     axios
-      .post(`${apiKey}register`, {
+      .post(`${apiKey}user/signup`, {
         firstname: firstname,
         lastname: lastname,
         email: email,
@@ -92,50 +141,18 @@ function App() {
       });
   };
 
-  const handleCheckout = (e, data) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    axios
-      .post(`${apiKey}create-checkout-session`, {
-        products: data,
-      })
-      .then((response) => {})
-      .catch((error) => {});
-  };
-
-  const loadProducts = () => {
-    axios.get(`${apiKey}products`).then((response) => {
-      setProductContent(response.data);
-    });
-  };
-
   useEffect(() => {
-    loadProducts();
-
     const token = sessionStorage.getItem("token");
-    if (!token) {
-      return setFailAuth(true);
-    }
+    loadData();
 
-    axios
-      .get(`${apiKey}users/current`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setCurrentUser(response.data);
-      })
-      .catch((error) => {
-        setFailAuth(true);
-      });
+    getCurrentUser(token);
   }, []);
 
-  console.log(`this is a keysgit :${process.env.REACT_APP_API_URL}`);
   return (
     <BrowserRouter>
       <NavBar
         success={success}
-        firstname={currentUser}
+        currentUser={currentUser}
         handleSignOut={handleSignOut}
         cartCount={cartCount}
         failedAuth={failedAuth}
@@ -146,33 +163,30 @@ function App() {
           path="/products"
           element={
             productsContent && (
-              <ProductsPage
-                productsContent={productsContent}
-                loadProducts={loadProducts}
-              />
+              <ProductsPage productsContent={productsContent} />
             )
-          }
-        />
-        <Route
-          path="products/:productid"
-          element={
-            <SingleProductPage
-              handleCartCount={handleCartCount}
-              currentUser={currentUser}
-            />
           }
         />
         <Route
           path="/products/category/:category"
           element={<ProductsPage productsContent={productsContent} />}
         />
+        <Route
+          path="products/:productid"
+          element={
+            <SingleProductPage
+              currentUser={currentUser}
+              addProduct={addProduct}
+            />
+          }
+        />
 
         <Route
           path="/cart"
           element={
             <CartPage
-              handleCheckout={handleCheckout}
               productsContent={productsContent}
+              removeProducts={removeProducts}
             />
           }
         />
@@ -180,9 +194,9 @@ function App() {
           path="/signin"
           element={
             <SignInPage
-              success={success}
               error={error}
-              handleSubmit={handleSubmit}
+              success={success}
+              handleLogIn={handleLogIn}
             />
           }
         />
@@ -193,7 +207,6 @@ function App() {
               error={error}
               userSignUp={userSignUp}
               handleSignUp={handleSignUp}
-              handleCartCount={handleCartCount}
             />
           }
         />

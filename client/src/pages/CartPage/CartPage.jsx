@@ -1,12 +1,12 @@
 import React from "react";
 import Cart from "../../components/Cart/Cart";
 
-function CartPage({ handleCheckout, productsContent, handleRemoveItem }) {
+function CartPage({ handleCheckout, productsContent, removeProducts }) {
   return (
     <section>
       <Cart
         handleCheckout={handleCheckout}
-        handleRemoveItem={handleRemoveItem}
+        removeProducts={removeProducts}
         productsContent={productsContent}
       />
     </section>

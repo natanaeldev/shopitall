@@ -15,7 +15,6 @@ import AboutPage from "./pages/AboutPage/AboutPage";
 import cartReducer, { sumItems } from "./hooks/reducer";
 
 import "./App.scss";
-import { speedDialActionClasses } from "@mui/material";
 
 const apiKey = process.env.REACT_APP_API_URL;
 
@@ -45,6 +44,15 @@ function App() {
 
   const removeProducts = (product) => {
     dispatch({ type: "REMOVE_ITEM", payload: product });
+  };
+
+  const increaseQuantity = (product) => {
+    // console.log(product);
+    dispatch({ type: "INCREASE", payload: product });
+  };
+
+  const decreaseQuantity = (product) => {
+    dispatch({ type: "DECREASE", payload: product });
   };
 
   const loadData = () => {
@@ -187,6 +195,9 @@ function App() {
             <CartPage
               productsContent={productsContent}
               removeProducts={removeProducts}
+              increaseQuantity={increaseQuantity}
+              decreaseQuantity={decreaseQuantity}
+              sumItems={sumItems}
             />
           }
         />

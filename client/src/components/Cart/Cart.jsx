@@ -1,27 +1,40 @@
 import React, { useEffect, useState } from "react";
+
 import axios from "axios";
 
 import CartItem from "../CartItem/CartItem";
-import cartReducer, { sumItems } from "../../hooks/reducer";
 import "./Cart.scss";
 
 const apiKey = process.env.REACT_APP_API_URL;
 
-function Cart({ removeProducts }) {
-  const [products, setProducts] = useState([]);
+function Cart({ removeProducts, decreaseQuantity, increaseQuantity }) {
+  const [cartProducts, setCartProduct] = useState([]);
+  const [totalProduct, setTotalProduct] = useState();
+
+  const [quantity, setQuantity] = useState();
 
   const loadLocalStorageItem = () => {
-    const data = JSON.parse(localStorage.getItem("cart"));
+    const product = JSON.parse(localStorage.getItem("cart"));
 
-    setProducts(data);
+    let item = product.map((item) => {
+      return item.default_price.unit_amount / 100;
+    });
+
+    let sum = item.reduce((accumulate, currentValue) => {
+      return accumulate + currentValue;
+    }, 0);
+
+    setTotalProduct(sum);
+    setCartProduct(product);
   };
 
   const handleCheckOut = async (e) => {
     e.preventDefault();
 
-    let productPrices = products.map((product) => {
+    let productPrices = cartProducts.map((product) => {
       return {
         price: product.default_price.id,
+        quantity: product.quantity,
       };
     });
 
@@ -29,13 +42,20 @@ function Cart({ removeProducts }) {
       `${apiKey}products/create-checkout-session`,
       productPrices
     );
-
     window.location = response.data.url;
+  };
+
+  const handleQuantityIncreament = (product) => {
+    increaseQuantity(product);
+  };
+
+  const handleDecreaseQuantity = (product) => {
+    decreaseQuantity(product);
   };
 
   useEffect(() => {
     loadLocalStorageItem();
-  }, [products]);
+  }, [cartProducts]);
 
   return (
     <section className="cart">
@@ -48,17 +68,25 @@ function Cart({ removeProducts }) {
             </button>
           </form>
         </div>
-        {!products ? (
+        {!cartProducts ? (
           <div className="cart__emptyMessages">Cart Empty</div>
         ) : (
           <ul className="cart__cartitems">
-            {products?.map((product) => {
+            {cartProducts?.map((product) => {
               return (
-                <CartItem products={product} removeProducts={removeProducts} />
+                <CartItem
+                  products={product}
+                  cartProducts={cartProducts}
+                  removeProducts={removeProducts}
+                  decreaseQuantity={handleDecreaseQuantity}
+                  increaseQuantity={handleQuantityIncreament}
+                  quantity={quantity}
+                />
               );
             })}
           </ul>
         )}
+        <div>Total: {totalProduct} </div>
       </div>
     </section>
   );

@@ -12,6 +12,10 @@
     list-style: none;
     color: $color-black;
   }
+
+  &__items-link:hover {
+    background-color: $color-slate;
+  }
 }
 
 .navbarTable-menu {
@@ -52,6 +56,16 @@
       &--size {
         font-size: 0.89em;
       }
+    }
+  }
+
+  &__items-link:hover {
+    @include tablet {
+      background-color: $color-Lgrey;
+    }
+
+    @include desktop {
+      background-color: $color-Lgrey;
     }
   }
 }

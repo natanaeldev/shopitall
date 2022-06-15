@@ -1,11 +1,20 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Fade from "@mui/material/Fade";
+
 import axios from "axios";
 
 import "./SingleProduct.scss";
 import ReviewsCard from "../ReviewsCard/ReviewsCard";
 const apiKey = process.env.REACT_APP_API_URL;
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function SingleProduct({ currentUser, addProduct }) {
   const navigate = useNavigate();
@@ -13,6 +22,22 @@ function SingleProduct({ currentUser, addProduct }) {
   let id = params.productid;
 
   const [singleProduct, setSingleProduct] = useState(null);
+
+  const [open, setOpen] = React.useState({ open: false, Transition: Fade });
+
+  const handleClick = (Transition) => {
+    setOpen({
+      open: true,
+      Transition,
+    });
+  };
+
+  const handleClose = () => {
+    setOpen({
+      ...open,
+      open: false,
+    });
+  };
 
   const handleAddReviews = (e) => {
     e.preventDefault();
@@ -76,12 +101,27 @@ function SingleProduct({ currentUser, addProduct }) {
                   }`}</span>
                 </div>
                 <div className="singleproduct__secundary-details">
-                  <h2>Size:</h2>
-                  <span>S</span>
+                  <label
+                    htmlFor="size"
+                    className="singleproduct__secundary-details-label"
+                  >
+                    Size:
+                  </label>
+                  <select
+                    name="size"
+                    id="size"
+                    className="singleproduct__secundary-details-select"
+                  >
+                    <option value="S">S</option>
+                    <option value="L">L</option>
+                    <option value="M">M</option>
+                    <option value="XL">XL</option>
+                  </select>
                   <button
                     className="singleproduct__item-button"
                     onClick={(e) => {
                       addProduct(singleProduct);
+                      handleClick();
                     }}
                   >
                     Add to cart
@@ -131,6 +171,20 @@ function SingleProduct({ currentUser, addProduct }) {
                 );
               })}
           </section>
+          <Snackbar
+            open={open.open}
+            TransitionComponent={open.Transition}
+            autoHideDuration={600}
+            onClose={handleClose}
+          >
+            <Alert
+              TransitionComponent={open.Transition}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              Product Added succesfully!
+            </Alert>
+          </Snackbar>
         </div>
       </section>
     )

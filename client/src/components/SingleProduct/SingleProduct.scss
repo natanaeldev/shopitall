@@ -236,3 +236,23 @@
     background: $color-cloud;
   }
 }
+
+.quantity {
+  margin: 0.55rem;
+
+  &__button {
+    border-radius: 50%;
+    border: none;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  &__box {
+    margin: 0.25rem;
+    padding: 0.55rem;
+    width: 5rem;
+    border: 1px solid $color-cloud;
+    border-radius: 2rem;
+    text-align: center;
+  }
+}

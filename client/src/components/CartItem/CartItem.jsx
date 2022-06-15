@@ -3,7 +3,12 @@ import React from "react";
 import "./CartItem.scss";
 // import image from "../../assets/images/products-img/Man/brown-jacket.jpg";
 
-function CartItem({ products, removeProducts }) {
+function CartItem({
+  products,
+  removeProducts,
+  decreaseQuantity,
+  increaseQuantity,
+}) {
   return (
     <li className="cartitem">
       <div className="cartitem__wrapper">
@@ -22,22 +27,33 @@ function CartItem({ products, removeProducts }) {
             </p>
           </div>
           <div className="cartitem__info-options">
-            <label
-              htmlFor="size"
-              className="singleproduct__secundary-details-label"
-            >
-              Size:
-            </label>
-            <select
-              name="size"
-              id="size"
-              className="singleproduct__secundary-details-select"
-            >
-              <option value="S">S</option>
-              <option value="L">L</option>
-              <option value="M">M</option>
-              <option value="XL">XL</option>
-            </select>
+            <div className="quantity">
+              <form action="">
+                <button
+                  className="quantity__button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    increaseQuantity(products);
+                  }}
+                >
+                  +
+                </button>
+                <span className="quantity__box">
+                  {isNaN(products.quantity) === true || null
+                    ? 0
+                    : products.quantity}
+                </span>
+                <button
+                  className="quantity__button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    decreaseQuantity(products);
+                  }}
+                >
+                  -
+                </button>
+              </form>
+            </div>
             <button
               className="cartitem__info-button"
               onClick={() => removeProducts(products)}

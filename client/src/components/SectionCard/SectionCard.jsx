@@ -36,7 +36,7 @@ function SectionCard() {
           </Link>
         </div>
       </div>
-      <div className="sectioncard__wrapper">
+      <div className="sectioncard__wrapper sectioncard__wrapper--box4">
         <div className="sectioncard__card sectioncard__card--sneaker">
           <Link to={`/products/category/sneaker`}>
             <div className="sectioncard__content sectioncard__content--middle">

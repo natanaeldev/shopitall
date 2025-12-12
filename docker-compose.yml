@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: docker/server.Dockerfile
+    container_name: shopitall-server
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+    ports:
+      - "4000:4000"
+
+  client:
+    build:
+      context: .
+      dockerfile: docker/client.Dockerfile
+    container_name: shopitall-client
+    environment:
+      - REACT_APP_API_URL=http://shopitall-server:4000
+    ports:
+      - "3000:80"
+    depends_on:
+      - server

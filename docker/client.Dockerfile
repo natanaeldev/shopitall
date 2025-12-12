@@ -8,7 +8,7 @@ RUN npm install || true
 
 COPY client ./client
 
-WORKDIR /app/client
+WORKDIR /app/client 
 
 # Install client deps and build
 RUN npm install

@@ -1,13 +1,12 @@
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const Products = require("./products.mongo");
 
-async function getAllStripeProducts() {
+async function getAllProducts() {
   // retrive the entire list of product from the api stripe
-  const productsPriceData = await stripe.products.list({
-    expand: ["data.default_price"],
-  });
 
-  return await productsPriceData;
+  const products = await Products.find({});
+
+  return products;
 }
 
 async function getProductsById(id) {
@@ -33,5 +32,5 @@ async function getProductsByCategory(category) {
 module.exports = {
   getProductsById,
   getProductsByCategory,
-  getAllStripeProducts,
+  getAllProducts,
 };

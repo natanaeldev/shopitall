@@ -5,7 +5,7 @@ const {
   getProductsById,
   getPrices,
   getProductsByCategory,
-  getAllStripeProducts,
+  getAllProducts,
 } = require("../../model/product/products.model");
 
 const YOUR_DOMAIN = process.env.YOUR_DOMAIN;
@@ -13,9 +13,9 @@ const YOUR_DOMAIN = process.env.YOUR_DOMAIN;
 /**
  */
 async function httpGetAllProducts(req, res) {
-  const stripeProducts = await getAllStripeProducts();
+  const Products = await getAllProducts();
 
-  return await res.status(200).json(stripeProducts);
+  return await res.status(200).json(Products);
 }
 
 async function httpGetProductsById(req, res) {

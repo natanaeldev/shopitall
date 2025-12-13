@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Float = require("mongoose-float").loadType(mongoose);
 
 const productSchema = new mongoose.Schema({
-  id: {
+  external_id: {
     type: String,
     required: true,
   },
@@ -11,7 +11,8 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: Array,
+    type: [String],
+    default: [],
   },
   price: {
     price_id: {
@@ -35,4 +36,4 @@ const productSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Products", productSchema);
+module.exports = mongoose.model("Product", productSchema, "product");

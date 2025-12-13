@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 
 //Conection to the mongoose database
 
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGODB_CLUSTER;
 
+mongoose.set("strictQuery", false);
 mongoose.connection.once("open", () => {
   console.log("MongoDb conection ready");
 });

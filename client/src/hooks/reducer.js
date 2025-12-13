@@ -1,3 +1,5 @@
+"use strict";
+
 const storeCartItems = (cartItems) => {
   const cart = cartItems.length > 0 ? cartItems : [];
   localStorage.setItem("cart", JSON.stringify(cart));

@@ -20,10 +20,9 @@ async function getProductsById(id) {
 
 async function getProductsByCategory(category) {
   // retrive product by category from the api stripe
-  console.log(category);
-  const productByCategory = await stripe.products.search({
-    query: `active:'true' AND metadata[\'category\']: \"${category}\"`,
-    expand: ["data.default_price"],
+
+  const productByCategory = await Products.find({
+    category: category,
   });
 
   return productByCategory;

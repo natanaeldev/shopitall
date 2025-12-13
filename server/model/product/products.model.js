@@ -11,9 +11,8 @@ async function getAllProducts() {
 
 async function getProductsById(id) {
   // retrive product by Id from the api stripe
-  const productById = await stripe.products.retrieve(id, {
-    expand: ["default_price"],
-  });
+
+  const productById = await Products.findOne({ _id: id });
 
   return productById;
 }

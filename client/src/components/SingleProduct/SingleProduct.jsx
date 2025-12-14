@@ -72,7 +72,7 @@ function SingleProduct({ currentUser, addProduct }) {
 
     return fullDate;
   };
-
+  console.log(id);
   return (
     singleProduct && (
       <section className="singleproduct">
@@ -84,7 +84,7 @@ function SingleProduct({ currentUser, addProduct }) {
           <div className="singleproduct__item-box">
             <img
               className="singleproduct__img"
-              src={singleProduct?.images}
+              src={singleProduct?.image}
               alt={singleProduct?.name}
             />
             <section className="singleproduct__details">
@@ -94,10 +94,9 @@ function SingleProduct({ currentUser, addProduct }) {
                     {singleProduct?.name}
                   </span>
                   <span className="singleproduct__item-price">{`$${
-                    isNaN(singleProduct?.default_price?.unit_amount / 100) ===
-                    true
+                    isNaN(singleProduct?.price) === true
                       ? 0
-                      : singleProduct?.default_price?.unit_amount / 100
+                      : singleProduct?.price
                   }`}</span>
                 </div>
                 <div className="singleproduct__secundary-details">

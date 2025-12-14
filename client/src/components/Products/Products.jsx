@@ -35,26 +35,26 @@ function Products({ productsContent }) {
         )}
         <div className="products__wrapperTablet">
           {!params.category
-            ? productsContent.data?.map((product) => {
+            ? productsContent.map((product) => {
                 return (
                   <Link
-                    to={`/products/${product.id}`}
+                    to={`/products/${product._id}`}
                     className="products__link"
                     key={product.id}
                   >
-                    <ProductsCard key={product.id} product={product} />
+                    <ProductsCard key={product._id} product={product} />
                   </Link>
                 );
               })
             : contentByCategory &&
-              contentByCategory.data?.map((product) => {
+              contentByCategory.map((product) => {
                 return (
                   <Link
-                    to={`/products/${product.id}`}
+                    to={`/products/${product._id}`}
                     className="products__link"
                     key={product.id}
                   >
-                    <ProductsCard key={product.id} product={product} />
+                    <ProductsCard key={product._id} product={product} />
                   </Link>
                 );
               })}

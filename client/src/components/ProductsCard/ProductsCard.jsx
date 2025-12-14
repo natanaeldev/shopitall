@@ -8,7 +8,7 @@ function ProductsCard({ product }) {
         <div className="productscard__item-box">
           <img
             className="productscard__img"
-            src={product.images}
+            src={product.image}
             alt={product.name}
           />
           <div className="productscard__details">
@@ -16,10 +16,7 @@ function ProductsCard({ product }) {
               {product.name}
             </span>
             <span className="productscard__details-price">
-              $
-              {isNaN(product.default_price?.unit_amount / 100) === true
-                ? 0
-                : product.default_price?.unit_amount / 100}
+              ${isNaN(product.price) === true ? 0 : product.price}
             </span>
           </div>
         </div>

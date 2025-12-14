@@ -13,17 +13,14 @@ function CartItem({
     <li className="cartitem">
       <div className="cartitem__wrapper">
         <div className="cartitem__header">
-          <img className="cartitem__header-img" src={products.images} alt="" />
+          <img className="cartitem__header-img" src={products.image} alt="" />
         </div>
         <div className="cartitem__info">
           <div className="cartitem__info-header">
             <p className="cartitem__info-header-name">{products.name}</p>
             <p className="cartitem__info-header-title">Price:</p>
             <p className="cartitem__info-header-price">
-              $
-              {isNaN(products.default_price?.unit_amount / 100) === true
-                ? 0
-                : products.default_price?.unit_amount / 100}
+              ${isNaN(products.price) === true ? 0 : products.price}
             </p>
           </div>
           <div className="cartitem__info-options">

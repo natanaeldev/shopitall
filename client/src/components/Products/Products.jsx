@@ -5,7 +5,7 @@ import { Link, Outlet, useParams } from "react-router-dom";
 import ProductsCard from "../ProductsCard/ProductsCard";
 import "./Products.scss";
 
-const apiKey = process.env.REACT_APP_API_URL;
+const apiKey = process.env.REACT_APP_API_URL || "http://localhost:8080/api/v1/";
 
 function Products({ productsContent }) {
   const params = useParams();
@@ -23,6 +23,7 @@ function Products({ productsContent }) {
       });
   }, [category]);
 
+  console.log(productsContent);
   return (
     <div className="products">
       <div className="products__wrapper">
@@ -35,10 +36,10 @@ function Products({ productsContent }) {
         )}
         <div className="products__wrapperTablet">
           {!params.category
-            ? productsContent.data?.map((product) => {
+            ? productsContent?.map((product) => {
                 return (
                   <Link
-                    to={`/products/${product.id}`}
+                    to={`/products/${product._id}`}
                     className="products__link"
                     key={product.id}
                   >
@@ -47,10 +48,10 @@ function Products({ productsContent }) {
                 );
               })
             : contentByCategory &&
-              contentByCategory.data?.map((product) => {
+              contentByCategory?.map((product) => {
                 return (
                   <Link
-                    to={`/products/${product.id}`}
+                    to={`/products/${product._id}`}
                     className="products__link"
                     key={product.id}
                   >

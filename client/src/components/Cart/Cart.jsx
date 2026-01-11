@@ -17,7 +17,7 @@ function Cart({ removeProducts, decreaseQuantity, increaseQuantity }) {
     const product = JSON.parse(localStorage.getItem("cart"));
 
     let item = product.map((item) => {
-      return item.default_price.unit_amount / 100;
+      return item.price;
     });
 
     let sum = item.reduce((accumulate, currentValue) => {
@@ -33,7 +33,7 @@ function Cart({ removeProducts, decreaseQuantity, increaseQuantity }) {
 
     let productPrices = cartProducts.map((product) => {
       return {
-        price: product.default_price.id,
+        id: product.id,
         quantity: product.quantity,
       };
     });

@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const stripe = require("stripe")(process.env.STRIPE_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const {
   getProductsById,
   getPrices,
@@ -16,6 +16,61 @@ async function httpGetAllProducts(req, res) {
   const Products = await getAllProducts();
 
   return await res.status(200).json(Products);
+}
+
+async function httpCreateCheckoutSession(req, res) {
+  try {
+    const { items } = req.body; // [{ id, quantity }, ...]
+
+    if (!items || !items.length) {
+      return res.status(400).json({ error: "No items provided" });
+    }
+
+    // 1) Grab all products from DB
+    const productIds = items.map((product) => product.id);
+
+    const produc = await getProductsById(productIds);
+
+    // Make sure we found them
+    const productsById = Object.fromEntries(
+      produc.map((p) => [String(p.id), p])
+    );
+
+    const line_items = items.map((item) => {
+      const product = productsById[String(item.id)];
+      if (!product) {
+        throw new Error(`Product not found for id ${item.id}`);
+      }
+
+      // price in cents
+      const amountInCents = Math.round(Number(product.price) * 100);
+
+      return {
+        price_data: {
+          currency: "usd", // or your currency
+          product_data: {
+            name: product.name,
+            // description: product.description, // optional
+            // images: [product.imageUrl],       // optional
+          },
+          unit_amount: amountInCents,
+        },
+        quantity: item.quantity,
+      };
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      line_items,
+      mode: "payment",
+      success_url: process.env.STRIPE_SUCCESS_URL,
+      cancel_url: process.env.STRIPE_CANCEL_URL,
+    });
+
+    return res.status(200).json({ url: session.url });
+  } catch (err) {
+    console.error("Stripe session error:", err);
+    return res.status(500).json({ error: "Unable to create checkout session" });
+  }
 }
 
 async function httpGetProductsById(req, res) {
@@ -41,73 +96,8 @@ async function httpGetProductsByCategory(req, res) {
     });
 }
 
-async function httpCreateCheckOutSessions(req, res) {
-  const data = req.body;
-
-  let line_items = data.map((product) => {
-    return { price: product.price, quantity: product.quantity };
-  });
-
-  const session = await stripe.checkout.sessions.create({
-    line_items,
-    shipping_address_collection: {
-      allowed_countries: ["US", "CA", "DO"],
-    },
-    shipping_options: [
-      {
-        shipping_rate_data: {
-          type: "fixed_amount",
-          fixed_amount: {
-            amount: 0,
-            currency: "usd",
-          },
-          display_name: "Free shipping",
-          // Delivers between 5-7 business days
-          delivery_estimate: {
-            minimum: {
-              unit: "business_day",
-              value: 5,
-            },
-            maximum: {
-              unit: "business_day",
-              value: 7,
-            },
-          },
-        },
-      },
-      {
-        shipping_rate_data: {
-          type: "fixed_amount",
-          fixed_amount: {
-            amount: 1500,
-            currency: "usd",
-          },
-          display_name: "Next day air",
-          // Delivers in exactly 1 business day
-          delivery_estimate: {
-            minimum: {
-              unit: "business_day",
-              value: 1,
-            },
-            maximum: {
-              unit: "business_day",
-              value: 1,
-            },
-          },
-        },
-      },
-    ],
-    mode: "payment",
-
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
-  });
-
-  res.json({ url: session.url });
-}
-
 module.exports = {
-  httpCreateCheckOutSessions,
+  httpCreateCheckoutSession,
   httpGetAllProducts,
   httpGetProductsById,
   httpGetProductsByCategory,

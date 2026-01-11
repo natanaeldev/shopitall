@@ -72,7 +72,7 @@ async function httpCurrentUser(req, res) {
     if (err) {
       return res.status(401).send("Invalid auth token");
     }
-    console.log(decoded.username);
+
     currentUser(decoded.username).then((user) => {
       delete user.password;
       res.status(200).json({ user });

@@ -23,7 +23,6 @@ function Products({ productsContent }) {
       });
   }, [category]);
 
-  console.log(productsContent);
   return (
     <div className="products">
       <div className="products__wrapper">

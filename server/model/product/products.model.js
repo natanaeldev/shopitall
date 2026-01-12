@@ -9,12 +9,13 @@ async function getAllProducts() {
   return products;
 }
 
-async function getProductsById(id) {
+async function getProductsById(ids) {
   // retrive product by Id from the api stripe
 
-  const productById = await Products.findOne({ _id: id });
-
-  return productById;
+  if (Array.isArray(ids)) {
+    return await Products.find({ _id: { $in: ids } });
+  }
+  return await Products.findOne({ _id: ids });
 }
 
 async function getProductsByCategory(category) {

@@ -40,7 +40,7 @@ function Cart({ removeProducts, decreaseQuantity, increaseQuantity }) {
 
     let response = await axios.post(
       `${apiKey}products/create-checkout-session`,
-      productPrices
+      { items: productPrices }
     );
     window.location = response.data.url;
   };

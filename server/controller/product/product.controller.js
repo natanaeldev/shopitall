@@ -36,11 +36,11 @@ async function httpCreateCheckoutSession(req, res) {
       produc.map((p) => [String(p.id), p])
     );
 
+    // Stripe line_items
     const line_items = items.map((item) => {
-      const product = productsById[String(item.id)];
-      if (!product) {
-        throw new Error(`Product not found for id ${item.id}`);
-      }
+      const product = productsById[item.id];
+
+      if (!product) throw new Error(`Product not found for id ${item.id}`);
 
       // price in cents
       const amountInCents = Math.round(Number(product.price) * 100);

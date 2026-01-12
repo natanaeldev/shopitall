@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 //Conection to the mongoose database
 
-const MONGO_URL = process.env.MONGODB_CLUSTER;
+const MONGO_URL = process.env.MONGODB_URI;
 
 mongoose.set("strictQuery", false);
 mongoose.connection.once("open", () => {

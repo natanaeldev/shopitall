@@ -16,7 +16,7 @@ import cartReducer, { sumItems } from "./hooks/reducer";
 
 import "./App.scss";
 
-const apiKey = process.env.REACT_APP_API_URL || "http://localhost:8080/api/v1/";
+const apiKey = process.env.REACT_APP_API_URL || "http://localhost:8000/api/v1/";
 
 const cartFromStorage = localStorage.getItem("cart")
   ? JSON.parse(localStorage.getItem("cart"))

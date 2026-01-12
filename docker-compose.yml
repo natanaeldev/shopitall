@@ -18,7 +18,7 @@ services:
       dockerfile: docker/client.Dockerfile
     container_name: shopitall-client
     environment:
-      - REACT_APP_API_URL=http://shopitall-server:4000
+      - REACT_APP_API_URL=http://20.28.46.177:4000
     ports:
       - "3000:80"
     depends_on:

@@ -85,13 +85,13 @@ function SingleProduct({ currentUser, addProduct }) {
             <img
               className="singleproduct__img"
               src={singleProduct?.image}
-              alt={singleProduct?.name}
+              alt={singleProduct?.product_name}
             />
             <section className="singleproduct__details">
               <div className="singleproduct__pramary-info">
                 <div className="singleproduct__pramary-info-header">
                   <span className="singleproduct__item-name">
-                    {singleProduct?.name}
+                    {singleProduct?.product_name}
                   </span>
                   <span className="singleproduct__item-price">{`$${
                     isNaN(singleProduct?.price) === true

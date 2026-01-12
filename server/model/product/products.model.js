@@ -1,4 +1,4 @@
-const stripe = require("stripe")(process.env.STRIPE_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Products = require("./products.mongo");
 
 async function getAllProducts() {
@@ -9,12 +9,13 @@ async function getAllProducts() {
   return products;
 }
 
-async function getProductsById(id) {
+async function getProductsById(ids) {
   // retrive product by Id from the api stripe
 
-  const productById = await Products.findOne({ _id: id });
-
-  return productById;
+  if (Array.isArray(ids)) {
+    return await Products.find({ _id: { $in: ids } });
+  }
+  return await Products.findOne({ _id: ids });
 }
 
 async function getProductsByCategory(category) {

@@ -5,7 +5,7 @@ import { Link, Outlet, useParams } from "react-router-dom";
 import ProductsCard from "../ProductsCard/ProductsCard";
 import "./Products.scss";
 
-const apiKey = process.env.REACT_APP_API_URL;
+const apiKey = process.env.REACT_APP_API_URL || "http://localhost:8080/api/v1/";
 
 function Products({ productsContent }) {
   const params = useParams();
@@ -35,7 +35,7 @@ function Products({ productsContent }) {
         )}
         <div className="products__wrapperTablet">
           {!params.category
-            ? productsContent.map((product) => {
+            ? productsContent?.map((product) => {
                 return (
                   <Link
                     to={`/products/${product._id}`}
@@ -47,7 +47,7 @@ function Products({ productsContent }) {
                 );
               })
             : contentByCategory &&
-              contentByCategory.map((product) => {
+              contentByCategory?.map((product) => {
                 return (
                   <Link
                     to={`/products/${product._id}`}

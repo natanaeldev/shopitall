@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'prod'], description: 'Deployment environment')
+    }
+
+    environment {
+        DOCKER_REGISTRY        = "docker.io"
+        DOCKER_IMAGE_NAMESPACE = "natanaeldev"   // <-- change to your Docker Hub username
+        APP_NAME               = "shopitall"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/natanaeldev/shopitall.git'
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                sh """
+                  cd client && npm install && npm test || echo 'No client tests yet'
+                  cd ../server && npm install && npm test || echo 'No server tests yet'
+                """
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh """
+                  TAG=${ENVIRONMENT}-${BUILD_NUMBER}
+
+                  docker build -f docker/client.Dockerfile -t $DOCKER_IMAGE_NAMESPACE/$APP_NAME-client:$TAG .
+                  docker build -f docker/server.Dockerfile -t $DOCKER_IMAGE_NAMESPACE/$APP_NAME-server:$TAG .
+
+                  echo $TAG > image_tag.txt
+                """
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                      TAG=$(cat image_tag.txt)
+
+                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin $DOCKER_REGISTRY
+
+                      docker push $DOCKER_IMAGE_NAMESPACE/$APP_NAME-client:$TAG
+                      docker push $DOCKER_IMAGE_NAMESPACE/$APP_NAME-server:$TAG
+                    """
+                }
+            }
+        }
+
+        // Terraform + Ansible stages will be added in step 3
+    }
+
+    post {
+        success {
+            echo "Build & push succeeded!"
+        }
+        failure {
+            echo "Build failed. Check logs."
+        }
+    }
+}

@@ -1,0 +1,24 @@
+---
+- name: Create app directory
+  file:
+    path: /opt/shopitall
+    state: directory
+
+- name: Deploy docker-compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/shopitall/docker-compose.yml
+
+- name: Pull images
+  shell: |
+    cd /opt/shopitall
+    docker compose pull
+  args:
+    executable: /bin/bash
+
+- name: Start containers
+  shell: |
+    cd /opt/shopitall
+    docker compose up -d
+  args:
+    executable: /bin/bash

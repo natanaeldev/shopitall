@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  server:
+    image: "{{ docker_image_namespace }}/{{ app_name }}-server:{{ image_tag }}"
+    restart: always
+    environment:
+      NODE_ENV: "{{ environment }}"
+      PORT: 4000
+    ports:
+      - "4000:4000"
+
+  client:
+    image: "{{ docker_image_namespace }}/{{ app_name }}-client:{{ image_tag }}"
+    restart: always
+    environment:
+      REACT_APP_API_URL: "http://{{ inventory_hostname }}:4000"
+    ports:
+      - "80:80"

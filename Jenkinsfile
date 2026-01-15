@@ -43,14 +43,14 @@ pipeline {
         stage('Push Images') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh """
+                    sh '''
                       TAG=$(cat image_tag.txt)
 
                       echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin $DOCKER_REGISTRY
 
                       docker push $DOCKER_IMAGE_NAMESPACE/$APP_NAME-client:$TAG
                       docker push $DOCKER_IMAGE_NAMESPACE/$APP_NAME-server:$TAG
-                    """
+                    '''
                 }
             }
         }

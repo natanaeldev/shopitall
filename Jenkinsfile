@@ -20,10 +20,10 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                sh """
-                  cd client && npm install && npm test || echo 'No client tests yet'
-                  cd ../server && npm install && npm test || echo 'No server tests yet'
-                """
+                sh '''
+                  cd client && npm install && npm test -- --watchAll=false --passWithNoTests || echo 'No client tests yet'
+                  cd ../server && npm install && npm test -- --watchAll=false --passWithNoTests || echo 'No server tests yet'
+                '''
             }
         }
 

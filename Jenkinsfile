@@ -22,7 +22,14 @@ pipeline {
             steps {
                 sh '''
                   cd client && npm install && npm test -- --watchAll=false --passWithNoTests || echo 'No client tests yet'
-                  cd ../server && npm install && npm test -- --watchAll=false --passWithNoTests || echo 'No server tests yet'
+                  cd ../server && npm ci || npm install
+
+                    # Only run tests if package.json has a "test" script
+                    if node -e "p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
+                        npm test
+                    else
+                        echo "No server tests yet"
+                    fi
                 '''
             }
         }

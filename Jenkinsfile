@@ -8,7 +8,7 @@ pipeline {
     environment {
         TAG = "${env.BUILD_NUMBER}"
         DOCKER_REGISTRY        = "docker.io"
-        DOCKER_IMAGE_NAMESPACE = "natanaeldev"   // <-- change to your Docker Hub username
+        DOCKER_IMAGE_NAMESPACE = "natanael0002"   // <-- change to your Docker Hub username
         APP_NAME               = "shopitall"
     }
 

@@ -34,6 +34,17 @@ pipeline {
                 '''
             }
         }
+       
+    //    this is to clean any existing docker auth to avoid conflicts
+        stage('Docker Clean Auth') {
+            steps {
+                sh '''
+                docker logout docker.io || true
+                rm -f /var/lib/jenkins/.docker/config.json || true
+                '''
+            }
+        }
+
 
         stage('Build Docker Images') {
             steps {

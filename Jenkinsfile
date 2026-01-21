@@ -80,13 +80,18 @@ pipeline {
             stage('Terraform Init & Apply') {
                 steps {
                     dir('infra/terraform') {
-                        withCredentials([$class: 'AmazonWebServicesCredentialsBinding'(credentialsId: 'aws-jenkins', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                       withCredentials([usernamePassword(
+                            credentialsId: 'aws-jenkins',
+                            usernameVariable: 'AWS_ACCESS_KEY_ID',
+                            passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                            )]) {
                             sh '''
-                              terraform init
-
-                              terraform apply -var="env=${ENVIRONMENT}" -var="docker_image_tag=$(cat ../../../image_tag.txt)" -auto-approve
+                                export AWS_REGION=us-east-1
+                                export AWS_DEFAULT_REGION=us-east-1
+                                terraform init -input=false
+                                terraform apply -auto-approve -input=false
                             '''
-                        }
+                            }
                     }
                 }
             }

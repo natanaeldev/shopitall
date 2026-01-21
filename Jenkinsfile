@@ -77,8 +77,7 @@ pipeline {
 
         // Terraform + Ansible stages will be added in step 3
 
-      
-        stage('Terraform Init & Apply') {
+            stage('Terraform Init & Apply') {
                 steps {
                     dir('infra/terraform') {
                         withCredentials([usernamePassword(credentialsId: 'aws-jenkins', usernameVariable: 'CLOUD_USER', passwordVariable: 'CLOUD_PASS')]) {
@@ -91,7 +90,7 @@ pipeline {
                     }
                 }
             }
-        }  
+           
     }
 
     post {

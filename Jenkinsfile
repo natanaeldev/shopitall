@@ -75,6 +75,22 @@ pipeline {
         }
 
         // Terraform + Ansible stages will be added in step 3
+
+        stages {
+            stage('Terraform Init & Apply') {
+                steps {
+                    dir('infra/terraform') {
+                        withCredentials([usernamePassword(credentialsId: 'cloud-provider-creds', usernameVariable: 'CLOUD_USER', passwordVariable: 'CLOUD_PASS')]) {
+                            sh '''
+                              terraform init
+
+                              terraform apply -var="env=${ENVIRONMENT}" -var="docker_image_tag=$(cat ../../../image_tag.txt)" -auto-approve
+                            '''
+                        }
+                    }
+                }
+            }
+        }   
     }
 
     post {

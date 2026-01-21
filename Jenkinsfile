@@ -10,6 +10,7 @@ pipeline {
         DOCKER_REGISTRY        = "docker.io"
         DOCKER_IMAGE_NAMESPACE = "natanael0002"   // <-- change to your Docker Hub username
         APP_NAME               = "shopitall"
+        AWS_DEFAULT_REGION      = "us-east-1"
     }
 
     stages {
@@ -80,7 +81,7 @@ pipeline {
             stage('Terraform Init & Apply') {
                 steps {
                     dir('infra/terraform') {
-                        withCredentials([usernamePassword(credentialsId: 'cloud-provider-creds', usernameVariable: 'CLOUD_USER', passwordVariable: 'CLOUD_PASS')]) {
+                        withCredentials([usernamePassword(credentialsId: 'aws-jenkins', usernameVariable: 'CLOUD_USER', passwordVariable: 'CLOUD_PASS')]) {
                             sh '''
                               terraform init
 

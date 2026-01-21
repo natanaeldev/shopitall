@@ -79,7 +79,7 @@ pipeline {
 
             stage('Terraform Init & Apply') {
                 steps {
-                    dir('infra/terraform') {
+                    dir('infra/terraform/aws') {
                        withCredentials([usernamePassword(
                             credentialsId: 'aws-jenkins',
                             usernameVariable: 'AWS_ACCESS_KEY_ID',

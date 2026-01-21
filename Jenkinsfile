@@ -80,7 +80,7 @@ pipeline {
             stage('Terraform Init & Apply') {
                 steps {
                     dir('infra/terraform') {
-                        withCredentials([usernamePassword(credentialsId: 'aws-jenkins', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        withCredentials([$class: 'AmazonWebServicesCredentialsBinding'(credentialsId: 'aws-jenkins', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                             sh '''
                               terraform init
 

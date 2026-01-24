@@ -97,6 +97,28 @@ pipeline {
                     }
                 }
             }
+
+            stage('Ansible Deploy (AWS)') {
+            steps {
+                dir('infra/ansible') {
+                    sh """
+                      TAG=\$(cat ../image_tag.txt)
+                      APP_IP=\$(cat ../terraform/aws/app_ip.txt)
+
+                      cat > inventories/aws/hosts.ini <<EOF
+[shopitall_app]
+\${APP_IP} ansible_user=ubuntu
+EOF
+
+                      ansible-playbook -i inventories/aws/hosts.ini playbooks/deploy_aws.yml \\
+                        -e environment=${ENVIRONMENT} \\
+                        -e docker_image_namespace=$DOCKER_IMAGE_NAMESPACE \\
+                        -e app_name=$APP_NAME \\
+                        -e image_tag=\$TAG
+                    """
+                }
+            }
+        }
            
     }
 

@@ -89,7 +89,7 @@ pipeline {
                             sh '''
                                 export AWS_REGION=us-east-1
                                 export AWS_DEFAULT_REGION=us-east-1
-                                export TF_VAR_key_name ="shopitall-key"
+                                export TF_VAR_key_name="shopitall-key"
                                 terraform init -input=false
                                 terraform apply -auto-approve -input=false
                             '''

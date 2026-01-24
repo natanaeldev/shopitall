@@ -100,7 +100,7 @@ pipeline {
 
             stage('Ansible Deploy (AWS)') {
             steps {
-                dir('infra/ansible') {
+                dir('infra/ansible/inventories/aws') {
                     sh """
                       TAG=\$(cat ../image_tag.txt)
                       APP_IP=\$(cat ../terraform/aws/app_ip.txt)

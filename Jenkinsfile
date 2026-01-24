@@ -11,6 +11,7 @@ pipeline {
         DOCKER_IMAGE_NAMESPACE = "natanael0002"   // <-- change to your Docker Hub username
         APP_NAME               = "shopitall"
         AWS_DEFAULT_REGION      = "us-east-1"
+        TF_VAR_key_name = "shopitall-key"
     }
 
     stages {
@@ -88,6 +89,7 @@ pipeline {
                             sh '''
                                 export AWS_REGION=us-east-1
                                 export AWS_DEFAULT_REGION=us-east-1
+                                export TF_VAR_key_name ="shopitall-key"
                                 terraform init -input=false
                                 terraform apply -auto-approve -input=false
                             '''

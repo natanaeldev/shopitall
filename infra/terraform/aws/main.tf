@@ -68,6 +68,15 @@ resource "aws_security_group" "app_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+// this conections is for ansible access from jenkins server
+  ingress {
+  description = "SSH from Jenkins (Azure VM)"
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["20.28.46.177/32"]
+}
+
 }
 
 resource "aws_instance" "app" {

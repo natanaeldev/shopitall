@@ -122,7 +122,7 @@ pipeline {
         mkdir -p inventories/aws
         cat > inventories/aws/hosts.ini <<EOF
 [shopitall_app]
-${APP_IP} ansible_user=ubuntu
+${APP_IP} ansible_user=ec2-user
 EOF
 
         echo "Inventory:"

@@ -99,43 +99,28 @@ pipeline {
             }
 
             
-      stage('Ansible Deploy (AWS)') {
+     stage('Ansible Deploy (AWS)') {
   steps {
     dir('infra/ansible') {
       sh '''#!/usr/bin/env bash
         set -euo pipefail
 
-        # Get the docker tag from the file you DO have
-        TAG="$(cat "$WORKSPACE/image_tag.txt" | tr -d '[:space:]')"
-
-        # Get instance public IP from terraform output (no app_ip.txt needed)
         TF_DIR="$WORKSPACE/infra/terraform/aws"
         APP_IP="$(terraform -chdir="$TF_DIR" output -raw app_public_ip | tr -d '[:space:]')"
+        TAG="$(cat "$WORKSPACE/image_tag.txt" | tr -d '[:space:]')"
+        KEY="/var/lib/jenkins/.ssh/shopitall-jenkins-key.pem"
 
-        if [[ -z "$APP_IP" ]]; then
-          echo "ERROR: Terraform output app_public_ip is empty"
-          terraform -chdir="$TF_DIR" output || true
-          exit 1
-        fi
+        # temp inventory (doesn't modify repo)
+        INV="$(mktemp)"
+        printf "[shopitall_app]\\n%s ansible_user=ec2-user ansible_ssh_private_key_file=%s\\n" \
+          "$APP_IP" "$KEY" > "$INV"
 
-        # Write inventory to your existing location
-        mkdir -p inventories/aws
-        cat > inventories/aws/hosts.ini <<'EOF'
-[shopitall_app]
-'"${APP_IP}"' ansible_user=ec2-user ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/shopitall-jenkins-key.pem
-EOF
+        echo "Inventory being used:"
+        cat "$INV"
 
-
-        echo "Inventory:"
-        cat inventories/aws/hosts.ini
-        EOF
-[shopitall_app]
-${APP_IP} ansible_user=ec2-user ansible_ssh_private_key_file=${KEY}
-EOF
-
-        # Run playbook
-        ansible-playbook -i inventories/aws/hosts.ini playbooks/deploy_aws.yml \
-          -e "environment=${ENVIRONMENT}" \
+        ansible-playbook -i "$INV" playbooks/deploy_aws.yml \
+          --private-key "$KEY" \
+          -e "deploy_env=${ENVIRONMENT}" \
           -e "docker_image_namespace=${DOCKER_IMAGE_NAMESPACE}" \
           -e "app_name=${APP_NAME}" \
           -e "image_tag=${TAG}"

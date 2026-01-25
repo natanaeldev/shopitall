@@ -126,9 +126,10 @@ ${APP_IP} ansible_user=ubuntu
 EOF
 
         echo "Inventory:"
-        cat inventories/aws/hosts.ini <<EOF
+        cat inventories/aws/hosts.ini
+        EOF
 [shopitall_app]
-${APP_IP} ansible_user=ubuntu ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/shopitall-jenkins-key.pem
+${APP_IP} ansible_user=ec2-user ansible_ssh_private_key_file=${KEY}
 EOF
 
         # Run playbook

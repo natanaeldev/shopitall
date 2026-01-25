@@ -1,4 +1,11 @@
 ---
+- name: Install required packages (curl)
+  become: true
+  yum:
+    name:
+      - curl
+    state: present
+
 - name: Install Docker on Amazon Linux
   become: true
   yum:
@@ -19,23 +26,24 @@
     groups: docker
     append: yes
 
-# Optional but recommended: install docker compose v2 plugin if available
-- name: Install docker-compose (Amazon Linux extras, if available)
+- name: Install docker compose v2 plugin
   become: true
   shell: |
     set -e
-    if command -v amazon-linux-extras >/dev/null 2>&1; then
-      amazon-linux-extras install -y docker
+    mkdir -p /usr/local/lib/docker/cli-plugins
+
+    # Download only if missing
+    if [ ! -x /usr/local/lib/docker/cli-plugins/docker-compose ]; then
+      curl -fsSL -o /usr/local/lib/docker/cli-plugins/docker-compose \
+        https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+      chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
     fi
+
+    # Optional: allow `docker-compose` command too
+    ln -sf /usr/local/lib/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
   args:
-    warn: false
-  changed_when: false
-  failed_when: false
+    executable: /bin/bash
 
-- name: Verify Docker works
+- name: Verify docker compose works
   become: true
-  command: docker --version
-  register: docker_ver
-
-- debug:
-    var: docker_ver.stdout
+  command: docker compose version

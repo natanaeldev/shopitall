@@ -99,37 +99,26 @@ pipeline {
             }
 
             
-           stage('Ansible Deploy (AWS)') {
+      stage('Ansible Deploy (AWS)') {
   steps {
     dir('infra/ansible') {
       sh '''#!/usr/bin/env bash
         set -euo pipefail
 
-        # --- get IP from terraform output (no app_ip.txt needed) ---
-        TF_DIR="../terraform/aws"
-        if [[ ! -f "$TF_DIR/terraform.tfstate" ]]; then
-          echo "ERROR: terraform state not found in $TF_DIR"
-          ls -lah "$TF_DIR" || true
-          exit 1
-        fi
+        # Get the docker tag from the file you DO have
+        TAG="$(cat "$WORKSPACE/image_tag.txt" | tr -d '[:space:]')"
 
+        # Get instance public IP from terraform output (no app_ip.txt needed)
+        TF_DIR="$WORKSPACE/infra/terraform/aws"
         APP_IP="$(terraform -chdir="$TF_DIR" output -raw app_public_ip | tr -d '[:space:]')"
+
         if [[ -z "$APP_IP" ]]; then
           echo "ERROR: Terraform output app_public_ip is empty"
           terraform -chdir="$TF_DIR" output || true
           exit 1
         fi
 
-        # --- image_tag optional ---
-        TAG_FILE="../image_tag.txt"
-        TAG=""
-        if [[ -f "$TAG_FILE" ]]; then
-          TAG="$(tr -d '[:space:]' < "$TAG_FILE")"
-        else
-          echo "WARN: image_tag.txt not found at $TAG_FILE (continuing without image_tag)"
-        fi
-
-        # --- write inventory ---
+        # Write inventory to your existing location
         mkdir -p inventories/aws
         cat > inventories/aws/hosts.ini <<EOF
 [shopitall_app]
@@ -139,7 +128,7 @@ EOF
         echo "Inventory:"
         cat inventories/aws/hosts.ini
 
-        # --- run playbook ---
+        # Run playbook
         ansible-playbook -i inventories/aws/hosts.ini playbooks/deploy_aws.yml \
           -e "environment=${ENVIRONMENT}" \
           -e "docker_image_namespace=${DOCKER_IMAGE_NAMESPACE}" \

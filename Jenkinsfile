@@ -120,10 +120,11 @@ pipeline {
 
         # Write inventory to your existing location
         mkdir -p inventories/aws
-        cat > inventories/aws/hosts.ini <<EOF
+        cat > inventories/aws/hosts.ini <<'EOF'
 [shopitall_app]
-${APP_IP} ansible_user=ec2-user
+'"${APP_IP}"' ansible_user=ec2-user ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/shopitall-jenkins-key.pem
 EOF
+
 
         echo "Inventory:"
         cat inventories/aws/hosts.ini

@@ -98,59 +98,58 @@ pipeline {
                 }
             }
 
-            stage('Ansible Deploy (AWS)') {
-            steps {
-  dir('infra/ansible') {
-    sh '''#!/usr/bin/env bash
-      set -euo pipefail
+            
+           stage('Ansible Deploy (AWS)') {
+  steps {
+    dir('infra/ansible') {
+      sh '''#!/usr/bin/env bash
+        set -euo pipefail
 
-      # --- Get APP IP from terraform output file ---
-      APP_IP_FILE="../terraform/aws/app_ip.txt"
-      if [[ ! -f "$APP_IP_FILE" ]]; then
-        echo "ERROR: app_ip.txt not found at $APP_IP_FILE"
-        echo "PWD: $(pwd)"
-        echo "Listing ../terraform/aws:"
-        ls -lah ../terraform/aws || true
-        exit 1
-      fi
+        # --- get IP from terraform output (no app_ip.txt needed) ---
+        TF_DIR="../terraform/aws"
+        if [[ ! -f "$TF_DIR/terraform.tfstate" ]]; then
+          echo "ERROR: terraform state not found in $TF_DIR"
+          ls -lah "$TF_DIR" || true
+          exit 1
+        fi
 
-      APP_IP="$(tr -d '[:space:]' < "$APP_IP_FILE")"
-      if [[ -z "$APP_IP" ]]; then
-        echo "ERROR: APP_IP is empty"
-        exit 1
-      fi
+        APP_IP="$(terraform -chdir="$TF_DIR" output -raw app_public_ip | tr -d '[:space:]')"
+        if [[ -z "$APP_IP" ]]; then
+          echo "ERROR: Terraform output app_public_ip is empty"
+          terraform -chdir="$TF_DIR" output || true
+          exit 1
+        fi
 
-      # --- image_tag is optional ---
-      TAG_FILE="../image_tag.txt"
-      TAG=""
-      if [[ -f "$TAG_FILE" ]]; then
-        TAG="$(tr -d '[:space:]' < "$TAG_FILE")"
-      else
-        echo "WARN: image_tag.txt not found at $TAG_FILE (continuing without image_tag)"
-      fi
+        # --- image_tag optional ---
+        TAG_FILE="../image_tag.txt"
+        TAG=""
+        if [[ -f "$TAG_FILE" ]]; then
+          TAG="$(tr -d '[:space:]' < "$TAG_FILE")"
+        else
+          echo "WARN: image_tag.txt not found at $TAG_FILE (continuing without image_tag)"
+        fi
 
-      # --- Write inventory file (matches your structure: inventories/aws/hosts.ini) ---
-      mkdir -p inventories/aws
-      cat > inventories/aws/hosts.ini <<EOF
+        # --- write inventory ---
+        mkdir -p inventories/aws
+        cat > inventories/aws/hosts.ini <<EOF
 [shopitall_app]
 ${APP_IP} ansible_user=ubuntu
 EOF
 
-      echo "Inventory written:"
-      cat inventories/aws/hosts.ini
+        echo "Inventory:"
+        cat inventories/aws/hosts.ini
 
-      # --- Run playbook ---
-      ansible-playbook -i inventories/aws/hosts.ini playbooks/deploy_aws.yml \
-        -e "environment=${ENVIRONMENT}" \
-        -e "docker_image_namespace=${DOCKER_IMAGE_NAMESPACE}" \
-        -e "app_name=${APP_NAME}" \
-        -e "image_tag=${TAG}"
-    '''
+        # --- run playbook ---
+        ansible-playbook -i inventories/aws/hosts.ini playbooks/deploy_aws.yml \
+          -e "environment=${ENVIRONMENT}" \
+          -e "docker_image_namespace=${DOCKER_IMAGE_NAMESPACE}" \
+          -e "app_name=${APP_NAME}" \
+          -e "image_tag=${TAG}"
+      '''
+    }
   }
 }
 
-        }
-           
     }
 
     post {

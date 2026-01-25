@@ -1,0 +1,11 @@
+---
+- hosts: shopitall_app
+  become: true
+  vars:
+    environment: "{{ environment }}"
+    docker_image_namespace: "{{ docker_image_namespace }}"
+    app_name: "{{ app_name }}"
+    image_tag: "{{ image_tag }}"
+  roles:
+    - role: docker
+    - role: app

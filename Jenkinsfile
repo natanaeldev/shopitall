@@ -11,7 +11,7 @@ pipeline {
         DOCKER_IMAGE_NAMESPACE = "natanael0002"   // <-- change to your Docker Hub username
         APP_NAME               = "shopitall"
         AWS_DEFAULT_REGION      = "us-east-1"
-        TF_VAR_key_name = "shopitall-key"
+        TF_VAR_key_name = "shopitall-jenkins-key"
     }
 
     stages {

@@ -6,7 +6,7 @@ This project simulates a real-world SaaS delivery pipeline deployed across AWS, 
 
 ---
 
-🎯 ## **Project Goals**
+## 🎯 **Project Goals**
 
 The Objective of this project is to demostrate the ability to:
 
@@ -20,4 +20,4 @@ This repository is internationally structured to reflect how a **professional De
 
 ---
 
-🧱 ## **Architecture Overview**
+## 🧱 **Architecture Overview**
